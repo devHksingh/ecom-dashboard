@@ -49,7 +49,7 @@ const ThemeToggle = () => {
         }
       }
   return (
-    <div className=" bottom-8">
+    <div className="  sticky top-[calc(100vh_-_48px_-_16px)] text-sm">
         
         
         <div className="flex items-center justify-center gap-1 border rounded-md md:gap-4 border-copy-primary">
@@ -73,4 +73,3 @@ const ThemeToggle = () => {
 }
 
 export default ThemeToggle
-// className="text-white fill-red-400"
