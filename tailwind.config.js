@@ -14,6 +14,7 @@ export default {
         "cta-text": "rgba(var(--cta-text))",
         dashboard:"rgba(var(--dashboard-bg))",
         grape: "rgba(var(--grape))",
+        Primary:"rgba(var(--blue-primary))"
       },
     },
   },

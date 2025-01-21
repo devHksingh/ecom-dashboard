@@ -21,8 +21,8 @@
   --cta: 139, 92, 246;
   --cta-active: 124, 58, 237;
   --cta-text: 255, 255, 255;
-  
-  --dashboard-bg: 227,227,229;
+
+  --dashboard-bg: 227, 227, 229;
 
   background: rgba(var(--background));
 }
@@ -39,7 +39,12 @@
   --cta: 99, 102, 241;
   --cta-active: 79, 70, 229;
   --cta-text: 255, 255, 255;
-  --dashboard-bg: 134,142,157;
+  --dashboard-bg: 134, 142, 157;
+  /* --btn-primary: 15, 181, 234; */
 
   background: rgba(var(--background));
+}
+:root{
+    --blue-primary: 15, 181, 234;
+    --grape: 114, 35, 204;
 }
