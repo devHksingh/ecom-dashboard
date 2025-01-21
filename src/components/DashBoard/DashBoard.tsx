@@ -1,7 +1,10 @@
+import TopBar from "./TopBar"
 
 const DashBoard = () => {
   return (
-    <div>DashBoard</div>
+    <div className="h-screen rounded-lg shadow bg-dashboard">
+      <TopBar/>
+    </div>
   )
 }
 
