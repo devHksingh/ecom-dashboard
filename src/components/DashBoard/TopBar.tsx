@@ -1,12 +1,14 @@
+import usegetFullDate from "../../hooks/usegetFullDate"
 
 const TopBar = () => {
+  const {fullDate,time} = usegetFullDate()
   return (
     <div className="px-4 pb-4 mt-2 mb-4 border-b border-stone-200">
       <div className="flex items-center justify-between p-0.5">
         <div>
           <span className="block text-sm font-bold">🚀 Good morning, User!</span>
           <span className="block text-xs text-copy-primary/70">
-            Tuesday, Aug 8th 2023
+            {`${fullDate}, ${time}`}
           </span>
         </div>
 
