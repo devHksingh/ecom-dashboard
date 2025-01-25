@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import z from 'zod'
+import { login } from "../../http/api";
 
 
 type FormFields = {
@@ -15,24 +17,34 @@ const schema = z.object({
 })
 
 const LoginForm = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  // mutation for data send for login
+  const mutation = useMutation({
+    mutationFn:login,
+    onSuccess: (response) => {
+      
+      console.log('login succesfull');
+      console.log(response);
+      
+      
+  },
+  })
     const {register,
         handleSubmit,
         formState:{errors}} = useForm<FormFields>({
             resolver: zodResolver(schema)
         })
     const onSubmit:SubmitHandler<FormFields>=(data)=>{
-        console.log(data);
+       
+        mutation.mutate(data)
         
-        console.log(data.email)
-        console.log(data.password)
     }
     
   return (
     <div className="w-full max-w-lg p-8 rounded-lg shadow-lg bg-card/75">
         
         <h1 className="self-center mt-1 text-2xl font-bold text-center text-copy-primary">Login</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-4 mt-2 rounded shadow-md ">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-6 mt-2 rounded shadow-xl">
             <label className="mt-1">
                 <span className="block text:md after:content-['*'] after:ml-0.5 after:text-red-500 font-semibold  mt-1 text-copy-secondary ">Email</span>
                 <input 

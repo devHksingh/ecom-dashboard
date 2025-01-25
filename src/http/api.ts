@@ -12,5 +12,5 @@ const api = axios.create({
 // api call for login
 
 export const login = async(data:{email:string;password:string})=>{
-    api.post('/api/v1/users/login',data)
+    return api.post('/api/v1/users/login',data)
 }
