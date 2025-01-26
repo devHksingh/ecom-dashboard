@@ -14,3 +14,7 @@ const api = axios.create({
 export const login = async(data:{email:string;password:string})=>{
     return api.post('/api/v1/users/login',data)
 }
+
+export const registerUser = async (data:{email:string;password:string;name:string;confirmPassword:string})=>{
+    return api.post('/api/v1/users/register',data)
+}
