@@ -1,7 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-
-
-
 export interface AuthState {
     isLogin: boolean,
     refreshToken: string,
@@ -44,7 +41,6 @@ export const authSlice = createSlice({
             state.userName = ""
             state.useremail = ""
         },
-
     }
 })
 
