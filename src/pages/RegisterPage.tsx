@@ -1,7 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import z from 'zod'
+import { registerUser } from '../http/api'
+import { LoaderCircle } from 'lucide-react'
+
 
 
 type FormFields={
@@ -24,18 +28,36 @@ const formSchema= z.object({
 
 const RegisterPage = () => {
   const navigate = useNavigate()
+  const mutation = useMutation({
+    mutationFn:registerUser,
+    onSuccess:(response)=>{
+      if(response.data.success){
+        navigate('/dashboard/auth/login')
+      }
+    },
+    onError:(res)=>{
+      console.log(res)
+    }
+  })
   const {register,handleSubmit,formState:{errors}} = useForm<FormFields>({
     resolver:zodResolver(formSchema)
   })
   const onSubmit:SubmitHandler<FormFields>=(data)=>{
     console.log(data)
+    mutation.mutate(data)
   }
   return (
     <div className="container grid w-full min-h-screen grid-cols-1 place-items-center bg-dashboard/50">
         <div className="w-full max-w-lg p-8 rounded-lg shadow-lg bg-card/75">
         
-        <h1 className="self-center mt-1 text-2xl font-bold text-center text-copy-primary">Create Account</h1>
+        <h1 className="self-center mt-1 text-2xl font-bold text-center text-copy-primary">Sign Up</h1>
+        
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-4 mt-2 rounded shadow-md ">
+            <span className='self-center font-medium text-left text-copy-primary/60'>Enter your information to create an account</span><br/>
+            {mutation.isError && (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              <span className="self-center mb-1 text-sm text-red-500">{(mutation.error as any)?.response?.data?.message}</span>
+            )}
             <label className="mt-1">
                 <span className="block text:md after:content-['*'] after:ml-0.5 after:text-red-500 font-semibold  mt-1 text-copy-secondary ">Name</span>
                 <input 
@@ -83,8 +105,12 @@ const RegisterPage = () => {
             {errors.confirmPassword && <span className="text-sm font-medium text-red-600">{errors.confirmPassword.message}</span>}
             
             <button 
-            className={` bg-cta hover:bg-cta-active transition-colors text-cta-text font-semibold w-full py-2 rounded-md mt-6 mb-4`}
-            type="submit">Submit</button>
+            className={` bg-cta hover:bg-cta-active transition-colors text-cta-text font-semibold w-full py-2 rounded-md mt-6 mb-4 flex items-center justify-center gap-2 ${mutation.isPending?'cursor-not-allowed opacity-45':''}`}
+            type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <span>
+                <LoaderCircle strokeWidth={2} className="text-bg-cta animate-spin" /></span>}
+              Submit
+            </button>
             <div className=" text-copy-primary">
             <p className="text-sm ">
             By continuing, I agree to the Terms of Use & Privacy Policy
