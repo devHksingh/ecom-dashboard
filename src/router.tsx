@@ -58,6 +58,14 @@ const router = createBrowserRouter([
               element: <RegisterPage />,
             },
             {
+              path: "admin/register", 
+              element: <RegisterPage />,
+            },
+            {
+              path: "manager/register", 
+              element: <RegisterPage />,
+            },
+            {
                 path: "*", // Catch-all route for unmatched paths under "/dashboard/auth"
                 element: <PageNotFound />,
             },
