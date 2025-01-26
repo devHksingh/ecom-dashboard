@@ -4,6 +4,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import z from 'zod'
 import { login } from "../../http/api";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
+import { addUserDetails } from "../../features/auth/authSlice";
+import { LoaderCircle } from "lucide-react";
 
 
 type FormFields = {
@@ -18,17 +22,31 @@ const schema = z.object({
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>()
+  // const data= useSelector((state:RootState)=>state.auth)
   // mutation for data send for login
   const mutation = useMutation({
-    mutationFn:login,
+    mutationFn: login,
     onSuccess: (response) => {
-      
-      console.log('login succesfull');
-      console.log(response);
-      
-      
-  },
-  })
+  
+      if (response.data.success) {
+        const { accessToken, refreshToken, userDetails } = response.data;
+        const { id, email, name } = userDetails;
+        dispatch(addUserDetails({isLogin:true,accessToken, refreshToken, userId:id,useremail:email, userName:name}))
+        
+        // Save user data in sessionStorage
+        const user = { id, name, email,accessToken ,refreshToken};
+        sessionStorage.setItem('user', JSON.stringify(user));
+  
+        // Retrieve user data from sessionStorage
+        const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
+        console.log("Retrieve user data from sessionStorage:",userData);
+        
+      }
+      // TODO: Navigate to products list page
+    },
+  });
+  
     const {register,
         handleSubmit,
         formState:{errors}} = useForm<FormFields>({
@@ -44,7 +62,12 @@ const LoginForm = () => {
     <div className="w-full max-w-lg p-8 rounded-lg shadow-lg bg-card/75">
         
         <h1 className="self-center mt-1 text-2xl font-bold text-center text-copy-primary">Login</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-6 mt-2 rounded shadow-xl">
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-6 rounded shadow-xl">
+              <span className='self-center mb-2 font-medium text-left text-copy-primary/60'>Enter your email below to login to your       account.</span> 
+              {mutation.isError && (
+                  <span className="self-center mb-1 text-sm text-red-500">{'Something went wrong.Try it again!'}</span>
+              )}
             <label className="mt-1">
                 <span className="block text:md after:content-['*'] after:ml-0.5 after:text-red-500 font-semibold  mt-1 text-copy-secondary ">Email</span>
                 <input 
@@ -70,8 +93,12 @@ const LoginForm = () => {
             {errors.password && <span className="text-sm font-medium text-red-600">{errors.password.message}</span>}
             
             <button 
-            className={` bg-cta hover:bg-cta-active transition-colors text-cta-text font-semibold w-full py-2 rounded-md mt-6 mb-4`}
-            type="submit">Submit</button>
+            className={` bg-cta hover:bg-cta-active transition-colors text-cta-text font-semibold w-full py-2 rounded-md mt-6 mb-4 flex items-center justify-center gap-2 ${mutation.isPending?'cursor-not-allowed opacity-45':''}`}
+            type="submit" disabled={mutation.isPending} >
+              {mutation.isPending && <span>
+                <LoaderCircle strokeWidth={2} className="text-bg-cta animate-spin" /></span>}
+              Submit
+            </button>
             <div className=" text-copy-primary">
           <p className="text-sm ">
             By continuing, I agree to the Terms of Use & Privacy Policy
