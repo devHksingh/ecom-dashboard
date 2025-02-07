@@ -6,6 +6,7 @@ import DashboardHome from "./components/DashboardHome";
 import DashboardLayout from "./layouts/DashboardLayout";
 import PageNotFound from "./pages/PageNotFound";
 import App from "./App";
+import ProductForm from "./pages/ProductForm";
 
 // const router = createBrowserRouter([
 //     {
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
         {
           path: "",
           element: <DashboardHome />,
+
         },
         {
           path: "auth",
@@ -71,6 +73,15 @@ const router = createBrowserRouter([
             },
           ],
         },
+        {
+          path:"product",
+          children:[
+            {
+              path:'uploadProduct',
+              element:<ProductForm/>
+            }
+          ]
+        }
         
       ],
     },
