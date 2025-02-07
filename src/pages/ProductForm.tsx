@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const productSchema = z.object({
-  productImage: z.instanceof(FileList),
+  productImage: z.instanceof(FileList).refine((files)=>files.length ===1,{message:"Only single product image is required"}),
   title: z.string().min(1, "Title is required"),
   brand: z.string().min(1, "Brand is required"),
   category: z.string().min(1, "Category is required"),
