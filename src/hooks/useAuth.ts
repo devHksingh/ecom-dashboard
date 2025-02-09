@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../app/store"
 import { addUserDetails } from "../features/auth/authSlice"
 
 const useAuth = () => {
-    const [isValidUser, setIsValidUser] = useState(false)
+    
     const userData = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch()
 
@@ -21,14 +21,12 @@ const useAuth = () => {
                     useremail: email,
                     userName: name
                 }))
-                setIsValidUser(true)
+                
             }
-        } else {
-            setIsValidUser(false)
-        }
+        } 
     }, [userData.isLogin, dispatch])
 
-    return isValidUser  
+     
 }
 
 export default useAuth
