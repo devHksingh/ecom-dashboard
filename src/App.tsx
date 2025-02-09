@@ -1,20 +1,21 @@
 import {  useEffect, useState } from 'react'
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
-import useAuth from './hooks/useAuth';
+// import useAuth from './hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { addUserDetails } from './features/auth/authSlice';
 
 
 function App() {
   
   const [loading,setLoading] = useState(true)
   const navigate = useNavigate()
-  
+  const dispatch = useDispatch()
   const userData = useSelector((state:RootState)=>state.auth)
   console.log("userData",userData);
-  const isValidUser  = useAuth()
-  console.log(isValidUser)
+  // const isValidUser  = useAuth()
+  // console.log(isValidUser)
   
   useEffect(() => {
     const initAuth = async () => {
@@ -24,7 +25,16 @@ function App() {
                 navigate("/dashboard/product/createProduct")
             } else {
                 setLoading(false)
-                navigate("/dashboard/auth/login")
+                const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+                  if (userSessionData.accessToken) {
+                      const { accessToken, refreshToken, id, name, email } = userSessionData
+                      dispatch(addUserDetails({ accessToken, refreshToken, id, name, email }))
+                      navigate('/dashboard/product/createProduct', { replace: true })
+                      setLoading(false)
+                  }else{
+                      navigate('/dashboard/auth/login',{replace:true})
+                      setLoading(false)
+                  }
             }
         } catch (error) {
             console.error('Navigation error:', error)
@@ -34,7 +44,7 @@ function App() {
     }
 
     initAuth()
-}, [ navigate, userData.isLogin])
+  }, [dispatch, navigate, userData.isLogin])
   
   
   return (
