@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { RootState } from '../app/store'
 import { useSelector } from 'react-redux'
 import { createProduct } from '../http/api'
+import { LoaderCircle } from 'lucide-react'
 // import useAuth from '../hooks/useAuth'
 
 
@@ -118,7 +119,7 @@ const mutation = useMutation({
             { name: "brand", label: "Brand", type: "text"  ,placeholder:'Enter product brand'},
             { name: "category", label: "Category", type: "text" ,placeholder:'Enter category' },
             { name: "currency", label: "Currency", type: "text" ,placeholder:'Enter currency' },
-            { name: "description", label: "Description", type: "text" ,placeholder:'Enter product description' },
+            // { name: "description", label: "Description", type: "text" ,placeholder:'Enter product description' },
             { name: "price", label: "Price", type: "number"  ,placeholder:'Enter product price'},
             { name: "salePrice", label: "Sale Price", type: "number"  ,placeholder:'Enter product salePrice'},
             { name: "totalStock", label: "Total Stock", type: "number" ,placeholder:'Enter product stock' }
@@ -127,7 +128,7 @@ const mutation = useMutation({
               <span className="block mb-1 text-sm font-medium">{field.label}</span>
               <input
                 type={field.type}
-                className="block w-full p-1 mt-1 text-black border-gray-300 rounded-md shadow-sm outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-stone-200 placeholder:text-stone-600 placeholder:font-medium"
+                className="block w-full p-1 mt-1 text-black border-gray-300 rounded-md shadow-sm outline-none bg-stone-200 placeholder:text-stone-600 placeholder:font-medium focus:ring-blue-500 focus:border-blue-500 ring-1"
                 placeholder={field.placeholder}
                 {...register(field.name as keyof ProductFormData)}
               />
@@ -138,13 +139,21 @@ const mutation = useMutation({
               )}
             </label>
           ))}
+          <label className="block">
+            <span className="block mb-1 text-sm font-medium">Description</span>
+            <textarea  rows={10} className="block p-2.5 w-full text-sm text-black bg-stone-200 rounded-lg border border-stone-400 focus:ring-blue-500 focus:border-blue-500 outline-none ring-1 placeholder:text-stone-600 placeholder:font-medium" placeholder="Enter product description ..."
+            {...register('description')}
+            ></textarea>
+          </label>
         </div>
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          disabled={mutation.isPending}
+          className={`w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 flex items-center justify-center gap-2 ${mutation.isPending? 'cursor-not-allowed opacity-45':''}`}
         >
+          {mutation.isPending && <span>
+            <LoaderCircle strokeWidth={2} className="text-bg-cta animate-spin" /></span>}
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
