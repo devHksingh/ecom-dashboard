@@ -1,7 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { RootState } from '../app/store'
+import { useSelector } from 'react-redux'
+import { createProduct } from '../http/api'
+// import useAuth from '../hooks/useAuth'
+
 
 const productSchema = z.object({
   productImage: z.instanceof(FileList).refine((files)=>files.length ===1,{message:"Only single product image is required"}),
@@ -11,13 +17,38 @@ const productSchema = z.object({
   currency: z.string().min(1, "Currency is required"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   price: z.coerce.number().positive("Price must be greater than 0"),
-  salePrice: z.coerce.number().positive("Sale price must be greater than 0"),
+  salePrice: z.coerce.number().int().nonnegative("Sale price must be a non-negative integer"),
   totalStock: z.coerce.number().int().nonnegative("Stock must be a non-negative integer")
 })
 
-type ProductFormData = z.infer<typeof productSchema>
+export type ProductFormData = z.infer<typeof productSchema>
 
 const ProductForm = () => {
+  // useAuth()
+  // user data from state
+const userData = useSelector((state:RootState)=>state.auth)
+const {accessToken,refreshToken} = userData
+// Log tokens when component mounts
+useEffect(() => {
+  
+  console.log('Current Access Token:', accessToken);
+  console.log('Current Refresh Token:', refreshToken);
+}, [accessToken, refreshToken]);
+
+const mutation = useMutation({
+  mutationKey:["createProduct"],
+  mutationFn:createProduct,
+  onError:(error)=>{
+    console.error('Mutation error:', error?.response?.data || error);
+  },
+  onSuccess:(response)=>{
+    console.log("Success:", response);
+    console.log('Product created successfully');
+  }
+})
+
+
+
   const {
     register,
     handleSubmit,
@@ -40,15 +71,25 @@ const ProductForm = () => {
       return () => URL.revokeObjectURL(imageUrl)
     }
   }, [productImage])
-
-  const onSubmit = async (data: ProductFormData) => {
-    try {
-      console.log(data)
-      // Add your submission logic here
-    } catch (error) {
-      console.error('Error submitting form:', error)
-    }
+  
+  function onSubmit(data:ProductFormData){
+    console.log("PRODUCT form data",data)
+    const formData = new FormData()
+    formData.append('productImage',data.productImage[0])
+    formData.append('title',data.title)
+    formData.append('brand',data.brand)
+    formData.append('category',data.category)
+    formData.append('currency',data.currency)
+    formData.append('description',data.description)
+    formData.append('price',String(data.price))
+    formData.append('salePrice',String(data.salePrice))
+    formData.append('totalStock',String(data.totalStock))
+    
+    mutation.mutate(formData)
+    console.log("formData : ",formData)
   }
+  
+  
 
   return (
     <div className='container grid w-full min-h-screen grid-cols-1 place-items-center bg-dashboard/50'>
@@ -68,7 +109,7 @@ const ProductForm = () => {
               <p className="mt-1 text-sm text-red-600">{errors.productImage.message}</p>
             )}
             {preview && (
-              <img src={preview} alt="Preview" className="object-cover w-32 h-32 mt-2 rounded " />
+              <img src={preview} alt="Preview" className="object-cover mt-2 rounded h-28 w-28 " />
             )}
           </label>
 
