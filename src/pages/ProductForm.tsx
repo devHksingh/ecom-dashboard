@@ -45,6 +45,7 @@ const mutation = useMutation({
   onSuccess:(response)=>{
     console.log("Success:", response);
     console.log('Product created successfully');
+    // TODO: NAVIGATE to product tabel page
   }
 })
 
@@ -54,7 +55,7 @@ const mutation = useMutation({
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema)
   })
@@ -91,11 +92,15 @@ const mutation = useMutation({
   }
   
   
+  
 
   return (
     <div className='container grid w-full min-h-screen grid-cols-1 place-items-center bg-dashboard/50'>
         <div className="p-6 mx-auto w-[90%] bg-card/75 text-copy-primary md:w-[60%] rounded-md">
       <h1 className="pb-4 mb-6 text-2xl font-bold text-center border-b-2 border-b-stone-600">Upload New Product</h1>
+      {mutation.isError && (
+                  <span className="self-center mb-1 text-sm text-red-500">{'Something went wrong.Try it again!'}</span>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="p-2 space-y-4">
         <div className="mb-4 space-y-4">
           <label className="flex items-center gap-2">
@@ -150,12 +155,14 @@ const mutation = useMutation({
         <button
           type="submit"
           disabled={mutation.isPending}
-          className={`w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 flex items-center justify-center gap-2 ${mutation.isPending? 'cursor-not-allowed opacity-45':''}`}
+          className={`w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 flex items-center justify-center gap-2 ${mutation.isPending? 'cursor-not-allowed opacity-45':''} ${mutation.isError?``:``}`}
         >
           {mutation.isPending && <span>
             <LoaderCircle strokeWidth={2} className="text-bg-cta animate-spin" /></span>}
-          {isSubmitting ? 'Submitting...' : 'Submit'}
+          {mutation.isError ? 'ReSubmit...' : 'Submit'}
+          
         </button>
+        
       </form>
     </div>
     </div>
