@@ -4,16 +4,28 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { RootState } from '../app/store'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createProduct } from '../http/api'
 import { LoaderCircle } from 'lucide-react'
+import { updateAccessToken } from '../features/auth/authSlice'
+import { AxiosError } from 'axios'
+
+
 // import useAuth from '../hooks/useAuth'
 
+interface ErrorResponse {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+  message: string;
+}
 
 const productSchema = z.object({
   productImage: z.instanceof(FileList).refine((files)=>files.length ===1,{message:"Only single product image is required"}),
   title: z.string().min(1, "Title is required"),
-  brand: z.string().min(1, "Brand is required"),
+  brand: z.string().min(4, "Brand is required and must be 4 char long"),
   category: z.string().min(1, "Category is required"),
   currency: z.string().min(1, "Currency is required"),
   description: z.string().min(10, "Description must be at least 10 characters"),
@@ -27,27 +39,73 @@ export type ProductFormData = z.infer<typeof productSchema>
 const ProductForm = () => {
   // useAuth()
   // user data from state
-const userData = useSelector((state:RootState)=>state.auth)
-const {accessToken,refreshToken} = userData
-// Log tokens when component mounts
-useEffect(() => {
   
-  console.log('Current Access Token:', accessToken);
-  console.log('Current Refresh Token:', refreshToken);
-}, [accessToken, refreshToken]);
+  const [displayMessage,setDisplayMessage]= useState("")
+  const userData = useSelector((state:RootState)=>state.auth)
+  const dispatch = useDispatch()
+  const {accessToken,refreshToken} = userData
+  // Log tokens when component mounts
+  useEffect(() => {
+    console.log(userData)
+    console.log('Current Access Token:', accessToken);
+    console.log('Current Refresh Token:', refreshToken);
+  }, [accessToken, refreshToken,userData]);
 
-const mutation = useMutation({
-  mutationKey:["createProduct"],
-  mutationFn:createProduct,
-  onError:(error)=>{
-    console.error('Mutation error:', error?.response?.data || error);
-  },
+  const mutation = useMutation({
+    mutationKey:["createProduct"],
+    mutationFn:createProduct,
+    // onError:(err:AxiosError)=>{
+    //   // console.response('Mutation response:', response?.data?.message );
+    //   console.log(err);
+      
+    //   console.log(err.response)
+    //   console.log(err.message)
+    //   if (err.response) {
+    //     console.log("Server Response:", err.response);
+    //     console.log("Error Message:", err.response.data?.message || "No error message from server");
+    //     setDisplayMessage(err.response.data?.message || err.message);
+    //   } else {
+    //     console.log("Network or Unexpected Error:", err.message);
+    //     setDisplayMessage(err.message);
+    //   }
+    //   // console.log(err.response.data.message)
+    //   // setDisplayMessage(err.response.data.message || err.message)
+    //   // const {message}= response.config
+    //   // .data
+    // },
+    onError: (err: AxiosError<ErrorResponse>) => {
+      console.log("Error:", err);
+  
+      if (err.response) {
+        console.log("Server Response:", err.response);
+  
+        
+        const errorData = err.response.data as ErrorResponse;
+        console.log("Error Message:", errorData.message || "No error message from server");
+        
+        setDisplayMessage(errorData.message || "Unable uplaod product on database. try it again!");
+      } else {
+        console.log("Network or Unexpected Error:", err.message);
+        setDisplayMessage(err.message);
+      }
+    },
   onSuccess:(response)=>{
     console.log("Success:", response);
     console.log('Product created successfully');
+    const {success,message,isAccessTokenExp,accessToken}= response.data
+    console.log("success :",success);
+    
+    if(isAccessTokenExp){
+      dispatch(updateAccessToken(accessToken))
+      const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+      userSessionData.accessToken = accessToken
+      sessionStorage.removeItem('user')
+      sessionStorage.setItem('user',JSON.stringify(userSessionData))
+    }
+    setDisplayMessage(message)
     // TODO: NAVIGATE to product tabel page
   }
-})
+  })
 
 
 
@@ -95,11 +153,14 @@ const mutation = useMutation({
   
 
   return (
-    <div className='container grid w-full min-h-screen grid-cols-1 place-items-center bg-dashboard/50'>
+    <div className='container grid w-full min-h-screen grid-cols-1 p-2 place-items-center bg-dashboard/50'>
         <div className="p-6 mx-auto w-[90%] bg-card/75 text-copy-primary md:w-[60%] rounded-md">
       <h1 className="pb-4 mb-6 text-2xl font-bold text-center border-b-2 border-b-stone-600">Upload New Product</h1>
       {mutation.isError && (
-                  <span className="self-center mb-1 text-sm text-red-500">{'Something went wrong.Try it again!'}</span>
+                  <span className="self-center mb-1 text-sm text-red-500 capitalize">Error: {displayMessage?displayMessage:'Unable uplaod product on database. try it again!'}</span>
+      )}
+      {mutation.isSuccess && (
+        <span className="self-center mb-1 text-sm text-lime-500"> {displayMessage}</span>
       )}
       <form onSubmit={handleSubmit(onSubmit)} className="p-2 space-y-4">
         <div className="mb-4 space-y-4">
