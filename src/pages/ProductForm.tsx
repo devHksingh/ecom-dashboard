@@ -9,6 +9,7 @@ import { createProduct } from '../http/api'
 import { LoaderCircle } from 'lucide-react'
 import { updateAccessToken } from '../features/auth/authSlice'
 import { AxiosError } from 'axios'
+import { queryClient } from '../main'
 
 
 // import useAuth from '../hooks/useAuth'
@@ -45,6 +46,7 @@ const ProductForm = () => {
   const dispatch = useDispatch()
   const {accessToken,refreshToken} = userData
   // Log tokens when component mounts
+  // TODO: REMOVE USEEFFECT ON PRODUCTION
   useEffect(() => {
     console.log(userData)
     console.log('Current Access Token:', accessToken);
@@ -89,7 +91,7 @@ const ProductForm = () => {
         setDisplayMessage(err.message);
       }
     },
-  onSuccess:(response)=>{
+  onSuccess:async(response)=>{
     console.log("Success:", response);
     console.log('Product created successfully');
     const {success,message,isAccessTokenExp,accessToken}= response.data
@@ -102,6 +104,11 @@ const ProductForm = () => {
       sessionStorage.removeItem('user')
       sessionStorage.setItem('user',JSON.stringify(userSessionData))
     }
+    // Marks data as stale → Immediately refetches the data from the server
+    
+    await queryClient.refetchQueries({ queryKey: ['products'] });
+    // Marks data as stale → Triggers a refetch on the next query execution
+    // await queryClient.invalidateQueries({ queryKey: ['products'] });
     setDisplayMessage(message)
     // TODO: NAVIGATE to product tabel page
   }
