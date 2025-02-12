@@ -32,6 +32,8 @@ const LoginForm = () => {
       if (response.data.success) {
         const { accessToken, refreshToken, userDetails } = response.data;
         const { id, email, name } = userDetails;
+        console.log("userDetails from login ",userDetails);
+        
         dispatch(addUserDetails({isLogin:true,accessToken, refreshToken, userId:id,useremail:email, userName:name}))
         
         // Save user data in sessionStorage
@@ -41,6 +43,9 @@ const LoginForm = () => {
         // Retrieve user data from sessionStorage
         const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
         console.log("Retrieve user data from sessionStorage:",userData);
+        // console.log("Retrieve user data from sessionStorage:",userData.isLogin);
+        console.log("Retrieve user data from sessionStorage:",userData.accessToken);
+        navigate('/dashboard/product/uploadProduct')
         
       }
       // TODO: Navigate to products list page

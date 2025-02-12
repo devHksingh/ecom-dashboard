@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base {
   * {
-    @apply transition-colors duration-200 ease-in-out;
+    @apply transition-colors ease-in-out duration-50;
   }
-}
+} */
 
 /* theme */
 .light {

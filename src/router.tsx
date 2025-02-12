@@ -7,6 +7,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import PageNotFound from "./pages/PageNotFound";
 import App from "./App";
 import ProductForm from "./pages/ProductForm";
+// import FormProduct from "./pages/FormProduct";
 
 // const router = createBrowserRouter([
 //     {
@@ -77,9 +78,13 @@ const router = createBrowserRouter([
           path:"product",
           children:[
             {
-              path:'uploadProduct',
+              path:'createProduct',
               element:<ProductForm/>
-            }
+            },
+            // {
+            //   path:'createProduct',
+            //   element:<FormProduct/>
+            // }
           ]
         }
         
