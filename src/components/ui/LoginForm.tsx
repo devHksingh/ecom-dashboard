@@ -45,7 +45,7 @@ const LoginForm = () => {
         console.log("Retrieve user data from sessionStorage:",userData);
         // console.log("Retrieve user data from sessionStorage:",userData.isLogin);
         console.log("Retrieve user data from sessionStorage:",userData.accessToken);
-        navigate('/dashboard/product/uploadProduct')
+        navigate('/dashboard/product/allProducts')
         
       }
       // TODO: Navigate to products list page
