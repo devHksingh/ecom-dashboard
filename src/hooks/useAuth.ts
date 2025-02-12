@@ -15,14 +15,14 @@ const useAuth = () => {
                 if (userSessionData.accessToken) {
                     const { accessToken, refreshToken, id, name, email } = userSessionData
                     dispatch(addUserDetails({ accessToken, refreshToken, id, name, email }))
-                    navigate('/dashboard/product/createProduct', { replace: true })
+                    // navigate('/dashboard/product/createProduct', { replace: true })
                     return
                 }else{
                     navigate('/dashboard/auth/login',{replace:true})
                     return
                 }
             }
-            navigate('/dashboard/product/createProduct', { replace: true })
+            // navigate('/dashboard/product/createProduct', { replace: true })
             return
         }
         checkAuth()
