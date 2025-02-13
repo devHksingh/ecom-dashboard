@@ -43,13 +43,17 @@ export const createProduct = async (data: FormData) => {
 
 // api  call for fetch all product list by limit and skip
 
-export const fetchProductsWithLimit = async (limit=10,skip=0)=>{
-    return api.get('/api/v1/products/getAllProductsWithLimits',{
-        params:{limit,skip}
+export const fetchProductsWithLimit = async (limit = 10, skip = 0) => {
+    return api.get('/api/v1/products/getAllProductsWithLimits', {
+        params: { limit, skip }
     })
 }
 
-export const fetchAllProductCategory = async()=>{
+export const fetchAllProductCategory = async () => {
     return api.get('/api/v1/products/getAllCategoryName')
+}
+
+export const fetchProductByCategoryWithLimit = async (data:{limit:number,skip:number,category:string[]}) => {
+    return api.post('/api/v1/products/getProductByCategoryWithLimit', data)
 }
 

@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import { store } from './app/store.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions:{
     // TODO: Change stale and cache time in production
     queries:{
