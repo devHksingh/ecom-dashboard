@@ -53,7 +53,18 @@ export const fetchAllProductCategory = async () => {
     return api.get('/api/v1/products/getAllCategoryName')
 }
 
-export const fetchProductByCategoryWithLimit = async (data:{limit:number,skip:number,category:string[]}) => {
+export const fetchProductByCategoryWithLimit = async (data: { limit: number, skip: number, category: string[] }) => {
     return api.post('/api/v1/products/getProductByCategoryWithLimit', data)
 }
 
+// get single product 
+
+export const fetchSingleProduct = async (id: string) => {
+    return api.get(`/api/v1/products/${id}`)
+}
+
+// delete single product
+
+export const deleteSingleProduct = async(id:string)=>{
+    return api.delete(`/api/v1/products/${id}`)
+}
