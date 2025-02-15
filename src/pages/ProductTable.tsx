@@ -1,6 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { fetchAllProductCategory, fetchProductByCategoryWithLimit, fetchProductsWithLimit } from "../http/api"
-import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PackageSearch, Pencil, Search } from "lucide-react"
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query"
+import { deleteSingleProduct, fetchAllProductCategory, fetchProductByCategoryWithLimit, fetchProductsWithLimit, fetchSingleProduct } from "../http/api"
+import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PackageSearch, Pencil, Search, Trash2 } from "lucide-react"
 import TableLoader from "../components/skeleton/TableLoader"
 import { useEffect, useState } from "react"
 import { debounce } from "lodash"
@@ -15,6 +15,9 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { Product } from "../types/product"
+import { useNavigate } from "react-router-dom"
+import { queryClient } from "../main"
+import { ToastContainer, toast } from 'react-toastify';
 
 const ProductTable = () => {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -23,7 +26,9 @@ const ProductTable = () => {
   const [skip, setSkip] = useState(0)
   const [category, setCategory] = useState("")
   const [productData, setProductData] = useState<Product[]>([])
-  
+  const [id,setId]= useState("")
+
+  const navigate = useNavigate()
   // Fetch products data
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", limit, skip, category],
@@ -50,6 +55,32 @@ const ProductTable = () => {
     refetchIntervalInBackground: true,
     placeholderData: keepPreviousData
   })
+
+  const {data:SingleProductData}=useQuery({
+    queryKey:["singleProduct",id],
+    queryFn:async()=>{
+      try {
+        
+        const response = await fetchSingleProduct(id)
+        return response
+        
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        throw error;
+      }
+    }
+  })
+
+  // delete single product
+  const mutation= useMutation({
+    mutationKey:["deleteProduct",id],
+    mutationFn:deleteSingleProduct,
+    onError:()=>{},
+    onSuccess:async()=>{
+      await queryClient.refetchQueries({ queryKey: ['products', limit, skip] });
+      toast.success('Proudct is deleted successfully',{position:'top-right'})
+    }
+  })
   
   // Fetch categories data
   const { data: categoryData, isLoading: isCategoryLoading } = useQuery({
@@ -69,11 +100,23 @@ const ProductTable = () => {
   const handleViewAction = (id: string) => {
     console.log("View product:", id);
     // Add your view logic here
+    // setId(id)
+    navigate(`/dashboard/product/singleProduct/${id}`)
   }
 
   const handleEditAction = (id: string) => {
     console.log("Edit product:", id);
     // Add your edit logic here
+  }
+
+  const handleDeleteAction = (id:string)=>{
+    console.log("Delete product:",id);
+    setId(id)
+    mutation.mutate(id)
+  }
+  if(SingleProductData){
+    console.log("SingleProductData :",SingleProductData);
+    
   }
 
   // Table column definitions
@@ -137,13 +180,20 @@ const ProductTable = () => {
             onClick={() => handleViewAction(info.getValue())}
             className="p-1 rounded hover:bg-gray-100"
           >
-            <Eye size={18} />
+            <Eye className="hover:text-sky-600" size={18} />
           </button>
           <button 
             onClick={() => handleEditAction(info.getValue())}
             className="p-1 rounded hover:bg-gray-100"
           >
-            <Pencil size={18} />
+            <Pencil className="hover:text-sky-600" size={18} />
+          </button>
+          <button 
+            onClick={() => handleDeleteAction(info.getValue())}
+            className="p-1 rounded hover:bg-gray-100"
+          >
+            {/* <Trash className="hover:text-red-600" size={18} /> */}
+            <Trash2 className="hover:text-red-600" size={18}/>
           </button>
         </div>
       ),
@@ -193,7 +243,7 @@ const ProductTable = () => {
   if (isError) {
     return (
       <div className="p-4 text-red-600 bg-red-100 rounded-md">
-        Error loading products. Please try again later.
+        Error loading products. Please try again later.Or refresh the page.
       </div>
     );
   }
@@ -364,6 +414,7 @@ const ProductTable = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   )
 }
