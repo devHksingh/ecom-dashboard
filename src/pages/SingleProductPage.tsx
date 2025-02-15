@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query"
-import { fetchSingleProduct } from "../http/api"
-import { useParams } from "react-router-dom"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { deleteSingleProduct, fetchSingleProduct } from "../http/api"
+import { useNavigate, useParams } from "react-router-dom"
 import SingleProductLoder from "../components/skeleton/SingleProductLoder"
 import ReadMoreText from "../components/ReadMoreText"
 import { PencilIcon, Trash2 } from "lucide-react"
@@ -9,7 +9,14 @@ import { Product } from "../types/product"
 
 
 const SingleProductPage = () => {
+    const mutation= useMutation({
+        mutationKey:["deleteProduct"],
+        mutationFn:deleteSingleProduct,
+        onError:()=>{},
+        onSuccess:()=>{}
+      })
     const {id} = useParams()
+    const navigate = useNavigate()
     console.log("product id on single product page ",id)
     console.log(typeof(id))
     if(!id){
@@ -36,7 +43,9 @@ const SingleProductPage = () => {
     };
     const handleUpdateBtn =(id:string)=>{
         console.log("handleUpdateBtn",id);
-        
+    }
+    const handleDeleteBtn =(id:string)=>{
+        mutation.mutate(id)
     }
     if (isLoading || !data){
         return(
@@ -102,7 +111,9 @@ const SingleProductPage = () => {
                     > 
                         <PencilIcon size={16}/>Update
                     </button>
-                    <button className="flex items-center justify-center gap-1 px-2 text-white bg-red-500 py-1.5 rounded-lg hover:bg-red-600">
+                    <button className="flex items-center justify-center gap-1 px-2 text-white bg-red-500 py-1.5 rounded-lg hover:bg-red-600"
+                        onClick={()=>handleDeleteBtn(product._id)}
+                    >
                         <Trash2/>Delete
                     </button>
                 </div>
