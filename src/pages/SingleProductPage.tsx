@@ -6,14 +6,19 @@ import ReadMoreText from "../components/ReadMoreText"
 import { PencilIcon, Trash2 } from "lucide-react"
 // import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react"
 import { Product } from "../types/product"
-
+import { queryClient } from "../main"
+import { ToastContainer, toast } from 'react-toastify';
 
 const SingleProductPage = () => {
     const mutation= useMutation({
         mutationKey:["deleteProduct"],
         mutationFn:deleteSingleProduct,
         onError:()=>{},
-        onSuccess:()=>{}
+        onSuccess:async()=>{
+            toast.success('Proudct is deleted successfully.Redirecting to product table page',{position:'top-right'})
+            await queryClient.invalidateQueries({ queryKey: ["products"] });
+            navigate('/dashboard/product/allProducts')
+        }
       })
     const {id} = useParams()
     const navigate = useNavigate()
@@ -45,6 +50,7 @@ const SingleProductPage = () => {
         console.log("handleUpdateBtn",id);
     }
     const handleDeleteBtn =(id:string)=>{
+        toast.info('Processing you request',{position:'top-right'})
         mutation.mutate(id)
     }
     if (isLoading || !data){
@@ -122,6 +128,7 @@ const SingleProductPage = () => {
                 
             )}
         </div>
+        <ToastContainer/>
     </div>
   )
 }
