@@ -18,6 +18,11 @@ import { Product } from "../types/product"
 import { useNavigate } from "react-router-dom"
 import { queryClient } from "../main"
 import { ToastContainer, toast } from 'react-toastify';
+import { AxiosError } from "axios"
+
+interface ErrorResponse {
+  message: string;
+}
 
 const ProductTable = () => {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -30,7 +35,7 @@ const ProductTable = () => {
 
   const navigate = useNavigate()
   // Fetch products data
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError ,error } = useQuery({
     queryKey: ["products", limit, skip, category],
     queryFn: async () => {
       try {
@@ -241,9 +246,14 @@ const ProductTable = () => {
   }
 
   if (isError) {
+    const axiosError = error as AxiosError<ErrorResponse>; 
+    const errorMessage =
+      axiosError.response?.data?.message || "Something went wrong!.Error loading products. Please try again later.Or refresh the page";
+    console.log("isError TABLE",isError)
+    console.error("Query Error:", errorMessage);
     return (
-      <div className="p-4 text-red-600 bg-red-100 rounded-md">
-        Error loading products. Please try again later.Or refresh the page.
+      <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
+        { errorMessage }
       </div>
     );
   }
@@ -290,8 +300,8 @@ const ProductTable = () => {
           <input
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search products..."
-            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Find in table..."
+            className="w-full py-2 pl-10 pr-4 border rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 text-stone-900 placeholder:text-stone-600 focus:ring-2"
           />
           <Search
             className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2"
@@ -301,14 +311,14 @@ const ProductTable = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full border divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 rounded">
+            <thead className="bg-stone-400">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th 
                       key={header.id} 
-                      className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                      className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-stone-200 "
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       <div className={`${header.column.getCanSort() ? 'flex items-center cursor-pointer select-none' : ''}`}>
@@ -346,7 +356,7 @@ const ProductTable = () => {
         {/* Pagination */}
         <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
           <div className="flex items-center mb-4 sm:mb-0">
-            <span className="mr-2">Items per page</span>
+            <span className="mr-2 text-copy-primary/60">Items per page</span>
             <select
               className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               value={table.getState().pagination.pageSize}
@@ -393,7 +403,7 @@ const ProductTable = () => {
                 }}
                 className="w-16 p-2 text-center border border-gray-300 rounded-md"
               />
-              <span className="ml-1">of {table.getPageCount()}</span>
+              <span className="ml-1 text-copy-primary/60">of {table.getPageCount()}</span>
             </span>
 
             <button
