@@ -10,6 +10,7 @@ import { LoaderCircle } from 'lucide-react'
 import { updateAccessToken } from '../features/auth/authSlice'
 import { AxiosError } from 'axios'
 import { queryClient } from '../main'
+import { ToastContainer, toast } from 'react-toastify';
 
 
 // import useAuth from '../hooks/useAuth'
@@ -96,7 +97,7 @@ const ProductForm = () => {
     console.log('Product created successfully');
     const {success,message,isAccessTokenExp,accessToken}= response.data
     console.log("success :",success);
-    
+    toast.success('Product is register successfully',{position:'top-right'})
     if(isAccessTokenExp){
       dispatch(updateAccessToken(accessToken))
       const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
@@ -120,6 +121,7 @@ const ProductForm = () => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors }
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema)
@@ -154,6 +156,12 @@ const ProductForm = () => {
     
     mutation.mutate(formData)
     console.log("formData : ",formData)
+    reset()
+    setPreview(null);
+    // const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    // if (fileInput) {
+    //   fileInput.value = ""; // Clear file input
+    // }
   }
   
   
@@ -191,7 +199,7 @@ const ProductForm = () => {
             { name: "title", label: "Title", type: "text" ,placeholder:'Enter product Title'},
             { name: "brand", label: "Brand", type: "text"  ,placeholder:'Enter product brand'},
             { name: "category", label: "Category", type: "text" ,placeholder:'Enter category' },
-            { name: "currency", label: "Currency", type: "text" ,placeholder:'Enter currency' },
+            // { name: "currency", label: "Currency", type: "text" ,placeholder:'Enter currency' },
             // { name: "description", label: "Description", type: "text" ,placeholder:'Enter product description' },
             { name: "price", label: "Price", type: "number"  ,placeholder:'Enter product price'},
             { name: "salePrice", label: "Sale Price", type: "number"  ,placeholder:'Enter product salePrice'},
@@ -213,6 +221,23 @@ const ProductForm = () => {
             </label>
           ))}
           <label className="block">
+            <span className="block mb-1 text-sm font-medium">Currency</span>
+            <select
+              {...register("currency",{required:"Currency is required"})}
+              className="block w-full p-2 mt-1 text-black border rounded-md bg-stone-200"
+              defaultValue={""}
+            >
+              <option>-- Select currency --</option>
+              <option value="INR">Indian Ruppee</option>
+              <option value="USD">US Dollar</option>
+              <option value="EUR">Euro</option>
+              <option value="GBP">Pound Sterling</option>
+              <option value="RUB">Russian Ruble</option>
+            </select>
+            {errors.currency && <p className="text-sm text-red-500">{errors.currency.message}</p>}
+          
+          </label>
+          <label className="block">
             <span className="block mb-1 text-sm font-medium">Description</span>
             <textarea  rows={10} className="block p-2.5 w-full text-sm text-black bg-stone-200 rounded-lg border border-stone-400 focus:ring-blue-500 focus:border-blue-500 outline-none ring-1 placeholder:text-stone-600 placeholder:font-medium" placeholder="Enter product description ..."
             {...register('description')}
@@ -233,6 +258,7 @@ const ProductForm = () => {
         
       </form>
     </div>
+    <ToastContainer/>
     </div>
   )
 }
