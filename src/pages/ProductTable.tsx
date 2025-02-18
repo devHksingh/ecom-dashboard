@@ -104,14 +104,14 @@ const ProductTable = () => {
   // Handle view and edit actions
   const handleViewAction = (id: string) => {
     console.log("View product:", id);
-    // Add your view logic here
+    
     // setId(id)
     navigate(`/dashboard/product/singleProduct/${id}`)
   }
 
   const handleEditAction = (id: string) => {
     console.log("Edit product:", id);
-    // Add your edit logic here
+    navigate(`/dashboard/product/editProduct/${id}`)
   }
 
   const handleDeleteAction = (id:string)=>{
@@ -308,7 +308,7 @@ const ProductTable = () => {
             size={20}
           />
         </div>
-
+                <p className="mb-4">Click a table header to apply  sorting functions.</p>
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 rounded">
@@ -318,7 +318,7 @@ const ProductTable = () => {
                   {headerGroup.headers.map((header) => (
                     <th 
                       key={header.id} 
-                      className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-stone-200 "
+                      className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase "
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       <div className={`${header.column.getCanSort() ? 'flex items-center cursor-pointer select-none' : ''}`}>
