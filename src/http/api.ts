@@ -78,3 +78,9 @@ export const updateProduct = async (id:string,data:FormData)=>{
         }
     })
 }
+
+// logout api
+
+export const logoutUser = async()=>{
+    return api.get('/api/v1/users/logout')
+}
