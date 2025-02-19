@@ -11,6 +11,7 @@ import { updateAccessToken } from '../features/auth/authSlice'
 import { AxiosError } from 'axios'
 import { queryClient } from '../main'
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'
 
 
 // import useAuth from '../hooks/useAuth'
@@ -45,6 +46,7 @@ const ProductForm = () => {
   const [displayMessage,setDisplayMessage]= useState("")
   const userData = useSelector((state:RootState)=>state.auth)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const {accessToken,refreshToken} = userData
   // Log tokens when component mounts
   // TODO: REMOVE USEEFFECT ON PRODUCTION
@@ -105,6 +107,7 @@ const ProductForm = () => {
       sessionStorage.removeItem('user')
       sessionStorage.setItem('user',JSON.stringify(userSessionData))
     }
+    navigate("/dashboard/product/allProducts")
     // Marks data as stale → Immediately refetches the data from the server
     
     await queryClient.refetchQueries({ queryKey: ['products'] });
