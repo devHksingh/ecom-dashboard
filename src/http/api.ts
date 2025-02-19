@@ -68,3 +68,13 @@ export const fetchSingleProduct = async (id: string) => {
 export const deleteSingleProduct = async(id:string)=>{
     return api.delete(`/api/v1/products/${id}`)
 }
+// update single product
+export const updateProduct = async (id:string,data:FormData)=>{
+    console.log("product id ",id)
+    console.log(data)
+    return api.patch(`/api/v1/products/update/${id}`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
