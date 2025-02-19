@@ -106,7 +106,7 @@ const ProductEditForm = () => {
         sessionStorage.removeItem('user')
         sessionStorage.setItem('user',JSON.stringify(userSessionData))
       }
-      navigate("/dashboard/product")
+      navigate("/dashboard/product/allProducts")
     },
     onError: async(err: AxiosError<ErrorResponse>) => {
       const message = err.response?.data?.message || "Error while updating product"
@@ -130,11 +130,15 @@ const ProductEditForm = () => {
     if (data?.data?.productDetail) {
       const product = data.data.productDetail 
       setOldImg(product.image)
+      const categoryValue = Array.isArray(product.category) 
+        ? product.category.join(',') 
+        : product.category
       
       // Set form values
       setValue("title", product.title)
       setValue("brand", product.brand)
-      setValue("category", product.category )
+      // setValue("category", product.category )
+      setValue("category", categoryValue)
       setValue("currency", product.currency)
       setValue("description", product.description)
       setValue("price", product.price)
