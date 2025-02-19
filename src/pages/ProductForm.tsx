@@ -198,7 +198,7 @@ const ProductForm = () => {
           {[
             { name: "title", label: "Title", type: "text" ,placeholder:'Enter product Title'},
             { name: "brand", label: "Brand", type: "text"  ,placeholder:'Enter product brand'},
-            { name: "category", label: "Category", type: "text" ,placeholder:'Enter category' },
+            { name: "category", label: "Category (comma separated)", type: "text" ,placeholder:'Enter category with comma separated' },
             // { name: "currency", label: "Currency", type: "text" ,placeholder:'Enter currency' },
             // { name: "description", label: "Description", type: "text" ,placeholder:'Enter product description' },
             { name: "price", label: "Price", type: "number"  ,placeholder:'Enter product price'},
