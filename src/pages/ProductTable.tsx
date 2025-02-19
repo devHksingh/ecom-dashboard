@@ -15,7 +15,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { Product } from "../types/product"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { queryClient } from "../main"
 import { ToastContainer, toast } from 'react-toastify';
 import { AxiosError } from "axios"
@@ -307,8 +307,12 @@ const ProductTable = () => {
             className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2"
             size={20}
           />
+        </div >
+                
+        <div className="flex items-center justify-between mb-4">
+          <p className="">Click a table header to apply  sorting functions. Total Product : {data?.total}</p>
+          <Link to={'/dashboard/product/createProduct'}  className="self-center px-2 py-1 text-white bg-indigo-500 rounded-lg hover:bg-indigo-600">Add Product</Link>
         </div>
-                <p className="mb-4">Click a table header to apply  sorting functions.</p>
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 rounded">
