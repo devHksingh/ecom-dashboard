@@ -10,6 +10,7 @@ import ProductForm from "./pages/ProductForm";
 import ProductTable from "./pages/ProductTable";
 import SingleProductPage from "./pages/SingleProductPage";
 import ProductEditForm from "./pages/ProductEditForm";
+import UsersTable from "./pages/UsersTable";
 // import FormProduct from "./pages/FormProduct";
 
 // const router = createBrowserRouter([
@@ -95,6 +96,15 @@ const router = createBrowserRouter([
             {
               path:`editProduct/:id`,
               element:<ProductEditForm/>
+            }
+          ]
+        },
+        {
+          path:'user',
+          children:[
+            {
+              path:'',
+              element:<UsersTable/>
             }
           ]
         }
