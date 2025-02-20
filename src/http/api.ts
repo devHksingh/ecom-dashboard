@@ -84,3 +84,11 @@ export const updateProduct = async (id:string,data:FormData)=>{
 export const logoutUser = async()=>{
     return api.get('/api/v1/users/logout')
 }
+
+// getallUser
+
+export const allUser = async(limit = 10, skip = 0)=>{
+    return api.get('/api/v1/users/admin/getAlluserWithLimt',{
+        params: { limit, skip }
+    })
+}
