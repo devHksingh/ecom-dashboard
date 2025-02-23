@@ -16,6 +16,12 @@ const UsersTable = () => {
     const [skip, setSkip] = useState(0)
     const [sorting, setSorting] = useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = useState("")
+    const [currentPage, setCurrentPage] = useState(null)
+    const [previousPage, setPreviousPage] = useState(null)
+    const [totalPages, setTotalPages] = useState(null)
+    const [nextPage, setNextPage] = useState(null)
+    
+    
     const userData = useSelector((state:RootState)=>state.auth)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -24,7 +30,8 @@ const UsersTable = () => {
         queryFn:async()=>{
             const res = await  allUser(limit,skip)
             return res.data
-        }
+        },
+        // placeholderData:true
     })
     const {accessToken,refreshToken} = userData
     useEffect(()=>{
@@ -32,10 +39,16 @@ const UsersTable = () => {
             const fetchUserData = data
             console.log("fetchUserData : ",fetchUserData)
             console.log("Fetched data:",fetchUserData)
+            setCurrentPage(fetchUserData.currentPage)
+            setPreviousPage(fetchUserData.prevPage)
+            setTotalPages(fetchUserData.totalPages)
+            setNextPage(fetchUserData.nextPage)
+            console.log("fetchUserData.currentPage",fetchUserData.currentPage);
+            
             // TODO: Not updating token?
             if(fetchUserData.isAccessTokenExp){
                 dispatch(updateAccessToken(fetchUserData.accessToken))
-                console.log("Dispatched updateAccessToken:", fetchUserData.accessToken);
+                // console.log("Dispatched updateAccessToken:", fetchUserData.accessToken);
             }
         }
     },[data, dispatch])
@@ -48,10 +61,10 @@ const UsersTable = () => {
     
     // Handle view and edit actions
   const handleViewAction = (id: string) => {
-    console.log("View product:", id);
+    console.log("View user:", id);
     
     // setId(id)
-    navigate(`/dashboard/product/singleProduct/${id}`)
+    // navigate(`/dashboard/product/singleProduct/${id}`)
   }
   
     
@@ -121,13 +134,23 @@ const UsersTable = () => {
     const page = table.getState().pagination.pageIndex;
     setSkip(page * limit);
   }, [limit, table]);
+  const handlePrevBtn = ()=>{
+    setSkip((prev)=>limit-prev)
+  }
+  const handleNextBtn = ()=>{
+    setSkip((prev)=> prev+limit)
+  }
+  
     if(isError){
         return <div>Error</div>
     }
     if(isLoading){
         return <div>Loading...</div>
     }
-    
+    console.log("table.getState()",table.getState())
+    console.log("table.getPageCount()",table.getPageCount())
+    console.log("table.getPageCount()",table.getPageCount())
+    // console.log("table.nextPage()",table.nextPage())
   return (
     <div className="container grid w-full grid-cols-1 p-2 bg-dashboard/50">
         <div className="p-6 w-[90%] bg-card/75 text-copy-primary md:w-[96%] mx-auto rounded-md">
@@ -191,7 +214,7 @@ const UsersTable = () => {
           </table>
         </div>
         {/* Pagination */}
-        <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
+        {/* <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
           <div className="flex items-center mb-4 sm:mb-0">
             <span className="mr-2 text-copy-primary/60">Items per page</span>
             <select
@@ -259,7 +282,37 @@ const UsersTable = () => {
               <ChevronsRight size={20} />
             </button>
           </div>
-        </div>
+        </div> */}
+        <select
+         value={table.getState().pagination.pageSize}
+         onChange={
+            (e)=>{
+                const newLimit = Number(e.target.value)
+                setLimit(newLimit)
+                table.setPageSize(newLimit)
+            }
+         }
+        >
+            {[5,10,20,30].map((pageSize)=>(
+                <option key={pageSize} value={pageSize}>{pageSize}</option>
+            ))}
+        </select>
+            <div className="flex gap-2 text-while bg-stone-600">
+                <button 
+                    onClick={handlePrevBtn}
+                    disabled={currentPage === 1}
+                    className="p-1 rounded-md bg-sky-500 hover:bg-sky-600"
+                >
+                    prev
+                </button>
+                <button 
+                    onClick={handleNextBtn}
+                    disabled={currentPage === totalPages}
+                    className="p-1 rounded-md bg-sky-500 hover:bg-sky-600"
+                >
+                    next
+                </button>
+            </div>
         </div >
         
         
