@@ -6,9 +6,9 @@ import { updateAccessToken } from "../features/auth/authSlice"
 import { RootState } from "../app/store"
 import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender,getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table"
 import { User } from "../types/user"
-import { ArrowBigDownIcon, ArrowUp01Icon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, Search } from "lucide-react"
+import {  ChevronLeft, ChevronRight, Search } from "lucide-react"
 // import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 
 
 const UsersTable = () => {
@@ -17,14 +17,14 @@ const UsersTable = () => {
     const [sorting, setSorting] = useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = useState("")
     const [currentPage, setCurrentPage] = useState(null)
-    const [previousPage, setPreviousPage] = useState(null)
+    // const [previousPage, setPreviousPage] = useState(null)
     const [totalPages, setTotalPages] = useState(null)
-    const [nextPage, setNextPage] = useState(null)
+    // const [nextPage, setNextPage] = useState(null)
     
     
     const userData = useSelector((state:RootState)=>state.auth)
     const dispatch = useDispatch()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const {data,isError,isLoading} = useQuery({
         queryKey:["getAllUsrs",limit,skip],
         queryFn:async()=>{
@@ -33,6 +33,8 @@ const UsersTable = () => {
         },
         // placeholderData:true
     })
+    
+    
     const {accessToken,refreshToken} = userData
     useEffect(()=>{
         if(data){
@@ -40,14 +42,15 @@ const UsersTable = () => {
             console.log("fetchUserData : ",fetchUserData)
             console.log("Fetched data:",fetchUserData)
             setCurrentPage(fetchUserData.currentPage)
-            setPreviousPage(fetchUserData.prevPage)
+            // setPreviousPage(fetchUserData.prevPage)
             setTotalPages(fetchUserData.totalPages)
-            setNextPage(fetchUserData.nextPage)
+            // setNextPage(fetchUserData.nextPage)
             console.log("fetchUserData.currentPage",fetchUserData.currentPage);
             
             // TODO: Not updating token?
             if(fetchUserData.isAccessTokenExp){
-                dispatch(updateAccessToken(fetchUserData.accessToken))
+                 dispatch(updateAccessToken(fetchUserData.accessToken))
+                
                 // console.log("Dispatched updateAccessToken:", fetchUserData.accessToken);
             }
         }
@@ -60,12 +63,12 @@ const UsersTable = () => {
   }, [accessToken, refreshToken,userData]);
     
     // Handle view and edit actions
-  const handleViewAction = (id: string) => {
-    console.log("View user:", id);
+//   const handleViewAction = (id: string) => {
+//     console.log("View user:", id);
     
-    // setId(id)
-    // navigate(`/dashboard/product/singleProduct/${id}`)
-  }
+//     // setId(id)
+//     // navigate(`/dashboard/product/singleProduct/${id}`)
+//   }
   
     
     // Table column definitions
@@ -94,17 +97,17 @@ const UsersTable = () => {
             header:()=><span>CreatedAt</span>,
             enableSorting: true,
         }),
-        columnHelper.accessor("_id",{
-            cell:(info)=>(
-                <button 
-                onClick={() => handleViewAction(info.getValue())}
-                className="p-1 rounded hover:bg-gray-100"
-                >
-                <Eye className="hover:text-sky-600" size={18} />
-                </button>
-            ),
-            header:()=> <span>Actions</span>
-        })
+        // columnHelper.accessor("_id",{
+        //     cell:(info)=>(
+        //         <button 
+        //         onClick={() => handleViewAction(info.getValue())}
+        //         className="p-1 rounded hover:bg-gray-100"
+        //         >
+        //         <Eye className="hover:text-sky-600" size={18} />
+        //         </button>
+        //     ),
+        //     header:()=> <span>Actions</span>
+        // })
     ]
 
     // Initialize table
@@ -184,8 +187,8 @@ const UsersTable = () => {
                     >
                       <div className={`${header.column.getCanSort() ? 'flex items-center cursor-pointer select-none' : ''}`}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getIsSorted() === "asc" && <ArrowUp01Icon className="ml-2" size={14}/>}
-                        {header.column.getIsSorted() === "desc" && <ArrowBigDownIcon className="ml-2" size={16}/>}
+                        {header.column.getIsSorted() === "asc" && <span className="ml-2">  🔼  </span>}
+                        {header.column.getIsSorted() === "desc" && <span className="ml-2">🔽</span>}
                       </div>
                     </th>
                   ))}
@@ -201,7 +204,7 @@ const UsersTable = () => {
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50">
+                  <tr key={row.id} className="hover:bg-gray-100">
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -283,35 +286,48 @@ const UsersTable = () => {
             </button>
           </div>
         </div> */}
-        <select
-         value={table.getState().pagination.pageSize}
-         onChange={
-            (e)=>{
-                const newLimit = Number(e.target.value)
-                setLimit(newLimit)
-                table.setPageSize(newLimit)
-            }
-         }
-        >
-            {[5,10,20,30].map((pageSize)=>(
-                <option key={pageSize} value={pageSize}>{pageSize}</option>
-            ))}
-        </select>
-            <div className="flex gap-2 text-while bg-stone-600">
-                <button 
-                    onClick={handlePrevBtn}
-                    disabled={currentPage === 1}
-                    className="p-1 rounded-md bg-sky-500 hover:bg-sky-600"
-                >
-                    prev
-                </button>
-                <button 
-                    onClick={handleNextBtn}
-                    disabled={currentPage === totalPages}
-                    className="p-1 rounded-md bg-sky-500 hover:bg-sky-600"
-                >
-                    next
-                </button>
+        
+            <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
+                <div className="flex items-center mb-4 sm:mb-0">
+                    <span className="mr-2 text-copy-primary/60">Items per page</span>
+                    <select
+                    value={table.getState().pagination.pageSize}
+                    className="p-2 text-black border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    onChange={
+                        (e)=>{
+                            const newLimit = Number(e.target.value)
+                            setLimit(newLimit)
+                            table.setPageSize(newLimit)
+                        }
+                    }
+                    >
+                    {[5,10,20,30].map((pageSize)=>(
+                        <option key={pageSize} value={pageSize}>{pageSize}</option>
+                    ))}
+                </select>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={handlePrevBtn}
+                        disabled={currentPage === 1 || isLoading}
+                        aria-label="Previous Page Button"
+                        className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                    >   
+                        
+                        <ChevronLeft size={20} />
+                    </button>
+                    <span className="ml-1 text-copy-primary/90">{currentPage} of {totalPages}</span>
+                    <button 
+                        onClick={handleNextBtn}
+                        disabled={currentPage === totalPages || isLoading}
+                        aria-label="Next Page Button"
+                        className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                    >
+                        
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+                
             </div>
         </div >
         
