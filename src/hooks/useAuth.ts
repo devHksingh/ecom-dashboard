@@ -10,7 +10,7 @@ const useAuth = () => {
     const dispatch = useDispatch()
     useEffect(() => {
         const checkAuth = async () => {
-            if (!userData.isLogin) {
+            if (!userData.accessToken ||!userData.isLogin) {
                 const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
                 if (userSessionData.accessToken) {
                     const { accessToken, refreshToken, id, name, email } = userSessionData
