@@ -11,10 +11,22 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const state = store.getState();
     const { accessToken, refreshToken } = state.auth;
-
+    let sessionAccessToken
+    let sessionRefreshToken
+    
+    console.log("accessToken, refreshToken",accessToken, refreshToken);
+    if(!accessToken){
+        const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+        sessionAccessToken = userSessionData.accessToken
+        sessionRefreshToken = userSessionData.refreshToken
+        console.log("sessionAccessToken",sessionAccessToken)
+    }
     if (accessToken && refreshToken) {
-        config.headers.Authorization = accessToken;
+        config.headers.Authorization = accessToken ;
         config.headers.refreshToken = refreshToken;
+    }else{
+        config.headers.Authorization =  sessionAccessToken;
+        config.headers.refreshToken = sessionRefreshToken;
     }
 
     return config;
