@@ -19,6 +19,7 @@ api.interceptors.request.use((config) => {
         const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
         sessionAccessToken = userSessionData.accessToken
         sessionRefreshToken = userSessionData.refreshToken
+    
         console.log("sessionAccessToken",sessionAccessToken)
     }
     if (accessToken && refreshToken) {
@@ -103,4 +104,14 @@ export const allUser = async(limit = 10, skip = 0)=>{
     return api.get('/api/v1/users/admin/getAlluserWithLimt',{
         params: { limit, skip }
     })
+}
+
+export const forcedLogout = async ()=>{
+    // let id
+    // const state = store.getState();
+    // const {userId} = state.auth
+    const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+    const userId = userSessionData.id
+    
+    api.post('/api/v1/users/forcedLogout',userId )
 }
