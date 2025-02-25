@@ -101,17 +101,22 @@ export const logoutUser = async()=>{
 // getallUser
 
 export const allUser = async(limit = 10, skip = 0)=>{
-    return api.get('/api/v1/users/admin/getAlluserWithLimt',{
+    return  api.get('/api/v1/users/admin/getAlluserWithLimt',{
         params: { limit, skip }
     })
 }
 
 export const forcedLogout = async ()=>{
-    // let id
-    // const state = store.getState();
-    // const {userId} = state.auth
     const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
-    const userId = userSessionData.id
+    console.log("userSessionData ---------------",userSessionData);
     
-    api.post('/api/v1/users/forcedLogout',userId )
+    const userId = userSessionData.id
+    console.log("UserID IN API : ",userId)
+    const data = {userId:userId}
+    console.log("UserID IN API : ",data)
+    const response = await api.post('/api/v1/users/forcedLogout',data );
+    console.log("Logout response : ",response)
+    
+    
+    return response;
 }
