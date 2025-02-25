@@ -159,7 +159,7 @@ const UsersTable = () => {
 //     setSkip(page * limit);
 //   }, [limit, table]);
   const handlePrevBtn = ()=>{
-    setSkip((prev)=>limit-prev)
+    setSkip((prev)=>prev-limit)
   }
   const handleNextBtn = ()=>{
     setSkip((prev)=> prev+limit)
