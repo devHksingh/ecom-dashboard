@@ -1,15 +1,21 @@
-import { useQuery } from "@tanstack/react-query"
-import { allUser } from "../http/api"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { allUser, forcedLogout } from "../http/api"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { updateAccessToken } from "../features/auth/authSlice"
+import { deleteUser, updateAccessToken } from "../features/auth/authSlice"
 import { RootState } from "../app/store"
 import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender,getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table"
 import { User } from "../types/user"
 import {  ChevronLeft, ChevronRight, Search } from "lucide-react"
+import TableLoader from "../components/skeleton/TableLoader"
+import { AxiosError } from "axios"
+import { useNavigate } from "react-router-dom"
 // import { ToastContainer, toast } from 'react-toastify';
 // import { useNavigate } from "react-router-dom"
 
+interface ErrorResponse {
+    message: string;
+  }
 
 const UsersTable = () => {
     const [limit, setLimit] = useState(5)
@@ -20,18 +26,32 @@ const UsersTable = () => {
     // const [previousPage, setPreviousPage] = useState(null)
     const [totalPages, setTotalPages] = useState(null)
     // const [nextPage, setNextPage] = useState(null)
+    const [totalusers, setTotalUsers] = useState(0)
     
     
     const userData = useSelector((state:RootState)=>state.auth)
+    
     const dispatch = useDispatch()
-    // const navigate = useNavigate()
-    const {data,isError,isLoading} = useQuery({
+    const navigate = useNavigate()
+    
+    // query for get all users
+    const {data,isError,isLoading,error} = useQuery({
         queryKey:["getAllUsrs",limit,skip],
         queryFn:async()=>{
             const res = await  allUser(limit,skip)
             return res.data
         },
         // placeholderData:true
+    })
+    // mutation query for forced logout user in case of error (in case of access token not found)
+    const mutation = useMutation({
+      mutationKey:["logoutUser"],
+      mutationFn:forcedLogout,
+      onSuccess:()=>{
+        dispatch(deleteUser())
+        sessionStorage.removeItem('user')
+        navigate('/dashboard/auth/login')
+      }
     })
     
     
@@ -44,6 +64,7 @@ const UsersTable = () => {
             setCurrentPage(fetchUserData.currentPage)
             // setPreviousPage(fetchUserData.prevPage)
             setTotalPages(fetchUserData.totalPages)
+            setTotalUsers(fetchUserData.totalUsers)
             // setNextPage(fetchUserData.nextPage)
             console.log("fetchUserData.currentPage",fetchUserData.currentPage);
             
@@ -133,10 +154,10 @@ const UsersTable = () => {
         pageCount: Math.ceil((data?.total || 0) / limit)
       })
     // Update skip value when page changes
-  useEffect(() => {
-    const page = table.getState().pagination.pageIndex;
-    setSkip(page * limit);
-  }, [limit, table]);
+//   useEffect(() => {
+//     const page = table.getState().pagination.pageIndex;
+//     setSkip(page * limit);
+//   }, [limit, table]);
   const handlePrevBtn = ()=>{
     setSkip((prev)=>limit-prev)
   }
@@ -144,12 +165,34 @@ const UsersTable = () => {
     setSkip((prev)=> prev+limit)
   }
   
-    if(isError){
-        return <div>Error</div>
-    }
-    if(isLoading){
-        return <div>Loading...</div>
-    }
+    if (isError) {
+        const axiosError = error as AxiosError<ErrorResponse>; 
+        const errorMessage =
+          axiosError.response?.data?.message || "Something went wrong!.Error loading user details. Please try again later.Or refresh the page";
+        
+        if(axiosError.status === (401 )){
+            console.error("axiosError:", axiosError.status);
+            // TODO: CALL LOgout api and navigate to login page
+            // const res = forcedLogout()
+            
+            // sessionStorage.removeItem('user')
+            // if(res){
+            //     console.log("Logout response : ",res)
+            // }
+            mutation.mutate()
+            
+        }
+        return (
+          <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
+            { errorMessage }
+          </div>
+        );
+      }
+    
+    if ( isLoading ) {
+        return <TableLoader />;
+      }
+    
     console.log("table.getState()",table.getState())
     console.log("table.getPageCount()",table.getPageCount())
     console.log("table.getPageCount()",table.getPageCount())
@@ -217,75 +260,7 @@ const UsersTable = () => {
           </table>
         </div>
         {/* Pagination */}
-        {/* <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
-          <div className="flex items-center mb-4 sm:mb-0">
-            <span className="mr-2 text-copy-primary/60">Items per page</span>
-            <select
-              className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                const newLimit = Number(e.target.value);
-                setLimit(newLimit);
-                table.setPageSize(newLimit);
-              }}
-            >
-              {[5, 10, 20, 30].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage() || isLoading}
-            >
-              <ChevronsLeft size={20} />
-            </button>
-
-            <button
-              className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage() || isLoading}
-            >
-              <ChevronLeft size={20} />
-            </button>
-
-            <span className="flex items-center">
-              <input
-                min={1}
-                max={table.getPageCount()}
-                type="number"
-                value={table.getState().pagination.pageIndex + 1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  table.setPageIndex(page);
-                }}
-                className="w-16 p-2 text-center border border-gray-300 rounded-md"
-              />
-              <span className="ml-1 text-copy-primary/60">of {table.getPageCount()}</span>
-            </span>
-
-            <button
-              className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isLoading}
-            >
-              <ChevronRight size={20} />
-            </button>
-
-            <button
-              className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage() || isLoading}
-            >
-              <ChevronsRight size={20} />
-            </button>
-          </div>
-        </div> */}
+        
         
             <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
                 <div className="flex items-center mb-4 sm:mb-0">
@@ -306,6 +281,7 @@ const UsersTable = () => {
                     ))}
                 </select>
                 </div>
+                <span className="text-copy-primary/90">Total users {totalusers}</span>
                 <div className="flex items-center gap-4">
                     <button 
                         onClick={handlePrevBtn}
