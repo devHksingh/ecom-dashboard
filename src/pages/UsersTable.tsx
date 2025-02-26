@@ -6,7 +6,7 @@ import { deleteUser, updateAccessToken } from "../features/auth/authSlice"
 import { RootState } from "../app/store"
 import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender,getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table"
 import { User } from "../types/user"
-import {  ChevronLeft, ChevronRight, Search } from "lucide-react"
+import {  ChevronLeft, ChevronRight, Search, User2Icon } from "lucide-react"
 import TableLoader from "../components/skeleton/TableLoader"
 import { AxiosError } from "axios"
 import { useNavigate } from "react-router-dom"
@@ -203,6 +203,22 @@ const UsersTable = () => {
             <h1 className="pb-4 mb-6 text-2xl font-bold text-center border-b-2 border-b-stone-600">
             UsersTable
             </h1>
+            
+          <div className="grid gap-4 auto-rows-min md:grid-cols-3">
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold text-md">Number of Admin: <span><User2Icon size={14}/></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.totalAdmin}</span>
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold text-md">Number of Manager: <span ><User2Icon size={14} /></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.totalManager}</span>
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold text-md">Number of Users: <span><User2Icon size={14}/></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.totalUser}</span>
+            </div>
+            
+          </div>
             {/*Table Global Search */}
             <div className="relative mt-6 mb-4">
                 <input
