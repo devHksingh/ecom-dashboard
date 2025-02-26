@@ -212,10 +212,12 @@ const UsersTable = () => {
             <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
               <h2 className="flex justify-between w-full font-semibold text-md">Number of Manager: <span ><User2Icon size={14} /></span></h2>
               <span className="font-mono text-4xl font-bold">{data.totalManager}</span>
+              <span>+{data.lastThirtyDaysUserCount.managerAdded} from last month</span>
             </div>
             <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
               <h2 className="flex justify-between w-full font-semibold text-md">Number of Users: <span><User2Icon size={14}/></span></h2>
               <span className="font-mono text-4xl font-bold">{data.totalUser}</span>
+              <span>+{data.lastThirtyDaysUserCount.usersAdded} from last month</span>
             </div>
             
           </div>
