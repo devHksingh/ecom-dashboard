@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query"
-import { deleteSingleProduct, fetchAllProductCategory, fetchProductByCategoryWithLimit, fetchProductsWithLimit, fetchSingleProduct } from "../http/api"
-import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PackageSearch, Pencil, Search, Trash2 } from "lucide-react"
+import { deleteSingleProduct, fetchAllProductCategory, fetchProductByCategoryWithLimit, fetchProductsWithLimit, fetchSingleProduct, forcedLogout } from "../http/api"
+import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight,  Eye, PackageSearch, Pencil, Search, Trash2 } from "lucide-react"
 import TableLoader from "../components/skeleton/TableLoader"
 import { useEffect, useState } from "react"
 import { debounce } from "lodash"
@@ -19,6 +19,8 @@ import { Link, useNavigate } from "react-router-dom"
 import { queryClient } from "../main"
 import { ToastContainer, toast } from 'react-toastify';
 import { AxiosError } from "axios"
+import { deleteUser } from "../features/auth/authSlice"
+import { useDispatch } from "react-redux"
 
 interface ErrorResponse {
   message: string;
@@ -32,7 +34,12 @@ const ProductTable = () => {
   const [category, setCategory] = useState("")
   const [productData, setProductData] = useState<Product[]>([])
   const [id,setId]= useState("")
-
+  const [currentPage, setCurrentPage] = useState(null)
+  // const [previousPage, setPreviousPage] = useState(null)
+  const [totalPages, setTotalPages] = useState(null)
+  // const [nextPage, setNextPage] = useState(null)
+  const [totalproducts, setTotalProducts] = useState(0)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   // Fetch products data
   const { data, isLoading, isError ,error } = useQuery({
@@ -73,7 +80,8 @@ const ProductTable = () => {
         console.error("Error fetching products:", error);
         throw error;
       }
-    }
+    },
+    enabled:!!id
   })
 
   // delete single product
@@ -93,11 +101,26 @@ const ProductTable = () => {
     queryFn: fetchAllProductCategory
   })
 
+  // mutation query for forced logout user in case of error (in case of access token not found)
+  const logoutMutation = useMutation({
+    mutationKey:["logoutUser"],
+    mutationFn:forcedLogout,
+    onSuccess:()=>{
+      dispatch(deleteUser())
+      sessionStorage.removeItem('user')
+      navigate('/dashboard/auth/login')
+    }
+  })
+
   // Update product data when API response changes
   useEffect(() => {
     if (data?.products) {
       setProductData(data.products);
       console.log("Updated product data:", data.products);
+      console.log("data",data);
+      setTotalPages(data.totalPages)
+      setCurrentPage(data.currentPage)
+      setTotalProducts(data.total)
     }
   }, [data]);
 
@@ -133,9 +156,9 @@ const ProductTable = () => {
           src={info.getValue()} 
           alt="Product" 
           className="object-cover w-16 h-16 rounded-lg"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder-image.png' // Add a placeholder image
-          }}
+          // onError={(e) => {
+          //   (e.target as HTMLImageElement).src = '/placeholder-image.png' // Add a placeholder image
+          // }}
         />
       ),
       header: () => <span>Image</span>
@@ -229,10 +252,18 @@ const ProductTable = () => {
   })
 
   // Update skip value when page changes
-  useEffect(() => {
-    const page = table.getState().pagination.pageIndex;
-    setSkip(page * limit);
-  }, [table.getState().pagination.pageIndex, limit]);
+  // useEffect(() => {
+  //   const page = table.getState().pagination.pageIndex;
+  //   setSkip(page * limit);
+  // }, [limit, table]);
+  const handlePrevBtn = ()=>{
+    console.log("skip -----: ",skip)
+    console.log("limit ------: ",limit)
+    setSkip((prev)=>prev-limit)
+  }
+  const handleNextBtn = ()=>{
+    setSkip((prev)=> prev+limit)
+  }
 
   // Handle category change
   const handleCategoryChange = (value: string) => {
@@ -244,13 +275,26 @@ const ProductTable = () => {
   if (isLoading || isCategoryLoading) {
     return <TableLoader />;
   }
-
+  
+  
   if (isError) {
     const axiosError = error as AxiosError<ErrorResponse>; 
     const errorMessage =
       axiosError.response?.data?.message || "Something went wrong!.Error loading products. Please try again later.Or refresh the page";
     console.log("isError TABLE",isError)
     console.error("Query Error:", errorMessage);
+    if(axiosError.status === 401){
+        console.error("axiosError:", axiosError.status);
+        // TODO: CALL LOgout api and navigate to login page
+        logoutMutation.mutate()
+        // dispatch(deleteUser())
+        // sessionStorage.removeItem('user')
+        // const res = forcedLogout()
+        // if(res){
+        //     console.log("Logout response : ",res)
+        // }
+        // navigate('/dashboard/auth/login')
+    }
     return (
       <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
         { errorMessage }
@@ -358,7 +402,7 @@ const ProductTable = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
+        {/* <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
           <div className="flex items-center mb-4 sm:mb-0">
             <span className="mr-2 text-copy-primary/60">Items per page</span>
             <select
@@ -426,7 +470,51 @@ const ProductTable = () => {
               <ChevronsRight size={20} />
             </button>
           </div>
-        </div>
+        </div> */}
+        <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
+                <div className="flex items-center mb-4 sm:mb-0">
+                    <span className="mr-2 text-copy-primary/60">Items per page</span>
+                    <select
+                    value={table.getState().pagination.pageSize}
+                    className="p-2 text-black border border-gray-300 rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:ring-2"
+                    onChange={
+                        (e)=>{
+                            const newLimit = Number(e.target.value)
+                            setLimit(newLimit)
+                            table.setPageSize(newLimit)
+                        }
+                    }
+                    >
+                    {[5,10,20,30].map((pageSize)=>(
+                        <option key={pageSize} value={pageSize}>{pageSize}</option>
+                    ))}
+                </select>
+                </div>
+                <span className="text-copy-primary/90">Total products {totalproducts}</span>
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={handlePrevBtn}
+                        disabled={currentPage === 1 || isLoading}
+                        aria-label="Previous Page Button"
+                        className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                    >   
+                        
+                        <ChevronLeft size={20} />
+                    </button>
+                    <span className="ml-1 text-copy-primary/90">{currentPage} of {totalPages}</span>
+                    <button 
+                        onClick={handleNextBtn}
+                        disabled={currentPage === totalPages || isLoading}
+                        aria-label="Next Page Button"
+                        className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                    >
+                        
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+                
+            </div>
+        
       </div>
       <ToastContainer/>
     </div>
