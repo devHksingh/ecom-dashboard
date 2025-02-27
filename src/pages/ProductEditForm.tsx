@@ -361,7 +361,7 @@ const ProductEditForm = () => {
           <div className="flex items-center justify-end space-x-4">
             <button
               type="button"
-              onClick={() => navigate("/dashboard/product")}
+              onClick={() => navigate("/dashboard/product/allProducts")}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Cancel
