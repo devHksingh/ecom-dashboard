@@ -96,18 +96,18 @@ const UsersTable = () => {
     const columnHelper = createColumnHelper<User>()
     const columns = [
         columnHelper.accessor("name",{
-            cell:(info)=>info.getValue(),
-            header:()=><span>Name</span>,
+            cell:(info)=><span className="font-semibold">{info.getValue()}</span>,
+            header:()=><span className="font-bold">Name</span>,
             enableSorting: true,
         }),
         columnHelper.accessor("email",{
-            cell:(info)=>info.getValue(),
-            header:()=><span>Email</span>,
+            cell:(info)=><span className="font-medium">{info.getValue()}</span>,
+            header:()=><span className="font-bold">Email</span>,
             enableSorting: true,
         }),
         columnHelper.accessor("role",{
-            cell:(info)=>info.getValue(),
-            header:()=><span>Role</span>,
+            cell:(info)=><span className="font-medium ">{info.getValue()}</span>,
+            header:()=><span className="font-bold">Role</span>,
             enableSorting: true,
         }),
         columnHelper.accessor("createdAt",{
@@ -115,7 +115,7 @@ const UsersTable = () => {
                 const localDateFormate = new Date(info.getValue()).toLocaleString()
                 return <span>{localDateFormate}</span>
             },
-            header:()=><span>CreatedAt</span>,
+            header:()=><span className="font-bold">CreatedAt</span>,
             enableSorting: true,
         }),
         // columnHelper.accessor("_id",{

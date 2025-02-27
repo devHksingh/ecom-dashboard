@@ -164,13 +164,13 @@ const ProductTable = () => {
       header: () => <span>Image</span>
     }),
     columnHelper.accessor("title", {
-      cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+      cell: (info) => <span className="font-semibold">{info.getValue()}</span>,
       header: () => <span>Title</span>,
       enableSorting: true,
     }),
     columnHelper.accessor("brand", {
       cell: (info) => info.getValue(),
-      header: () => <span>Brand</span>,
+      header: () => <span >Brand</span>,
       enableSorting: true,
     }),
     columnHelper.accessor("category", {
@@ -390,7 +390,7 @@ const ProductTable = () => {
                 table.getRowModel().rows.map((row) => (
                   <tr key={row.id} className="hover:bg-gray-50">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                      <td key={cell.id} className="px-6 py-4 text-sm font-medium text-gray-500 whitespace-nowrap">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
