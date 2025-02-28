@@ -172,13 +172,7 @@ const UsersTable = () => {
         
         if(axiosError.status === (401 )){
             console.error("axiosError:", axiosError.status);
-            // TODO: CALL LOgout api and navigate to login page
-            // const res = forcedLogout()
             
-            // sessionStorage.removeItem('user')
-            // if(res){
-            //     console.log("Logout response : ",res)
-            // }
             mutation.mutate()
             
         }
