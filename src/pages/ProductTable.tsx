@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query"
 import { deleteSingleProduct, fetchAllProductCategory, fetchProductByCategoryWithLimit, fetchProductsWithLimit, fetchSingleProduct, forcedLogout } from "../http/api"
-import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight,  Eye, PackageSearch, Pencil, Search, Trash2 } from "lucide-react"
+import { ArrowBigDownIcon, ArrowUp01Icon, ChevronDownIcon, ChevronLeft, ChevronRight,  Eye, PackageSearch, Pencil, Search, ShoppingBag, Store, Trash2, TrendingDown, TrendingUp, Warehouse } from "lucide-react"
 import TableLoader from "../components/skeleton/TableLoader"
 import { useEffect, useState } from "react"
 import { debounce } from "lodash"
@@ -34,6 +34,7 @@ const ProductTable = () => {
   const [category, setCategory] = useState("")
   const [productData, setProductData] = useState<Product[]>([])
   const [id,setId]= useState("")
+  const [lastMountAddedProduct,setLastMountAddedProduct]= useState(0)
   const [currentPage, setCurrentPage] = useState(null)
   // const [previousPage, setPreviousPage] = useState(null)
   const [totalPages, setTotalPages] = useState(null)
@@ -101,6 +102,11 @@ const ProductTable = () => {
     queryFn: fetchAllProductCategory
   })
 
+  if(data){
+    console.log("categoryData :",categoryData)
+    console.log("categoryData :",data)
+  }
+
   // mutation query for forced logout user in case of error (in case of access token not found)
   const logoutMutation = useMutation({
     mutationKey:["logoutUser"],
@@ -118,9 +124,11 @@ const ProductTable = () => {
       setProductData(data.products);
       console.log("Updated product data:", data.products);
       console.log("data",data);
+      console.log("lastThirtyDaysProductCount",data.lastThirtyDaysProductCount);
       setTotalPages(data.totalPages)
       setCurrentPage(data.currentPage)
       setTotalProducts(data.total)
+      setLastMountAddedProduct(data.lastThirtyDaysProductCount)
     }
   }, [data]);
 
@@ -287,13 +295,7 @@ const ProductTable = () => {
         console.error("axiosError:", axiosError.status);
         // TODO: CALL LOgout api and navigate to login page
         logoutMutation.mutate()
-        // dispatch(deleteUser())
-        // sessionStorage.removeItem('user')
-        // const res = forcedLogout()
-        // if(res){
-        //     console.log("Logout response : ",res)
-        // }
-        // navigate('/dashboard/auth/login')
+        
     }
     return (
       <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
@@ -308,6 +310,38 @@ const ProductTable = () => {
         <h1 className="pb-4 mb-6 text-2xl font-bold text-center border-b-2 border-b-stone-600">
           Product Details
         </h1>
+
+        <div className="grid gap-4 mt-2 mb-4 auto-rows-min md:grid-cols-3">
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">total Products: <span> <Warehouse className="text-sky-500"/></span></h2>
+              <span className="font-mono text-4xl font-bold">{totalproducts}</span>
+              <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{lastMountAddedProduct} from last month</span>
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">total category: <span> <ShoppingBag className="text-blue-400"/></span></h2>
+              <span className="font-mono text-4xl font-bold">{categoryData?.data.categories.length}</span>
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">total stock Quantaty: <span><Store className="text-sky-500"/></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.productStockStatus.stockQuantaty}</span>
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">in Stock: <span ><TrendingUp className="text-lime-500" /></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.productStockStatus.inStock}</span>
+              
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">low Stock: <span><TrendingDown className="text-yellow-500" /></span></h2>
+              <span className="font-mono text-4xl font-bold">{data.productStockStatus.lowStock}</span>
+              
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">out Of Stock: <span><TrendingDown className="text-red-500" /></span></h2>
+              <span className="font-mono text-4xl font-bold ">{data.productStockStatus.outOfStock}</span>
+              
+            </div>
+            
+        </div>
 
         {/* Category Filter */}
         <div>
@@ -339,6 +373,8 @@ const ProductTable = () => {
           </div>
         </div>
 
+        
+
         {/* Global Search */}
         <div className="relative mt-6 mb-4">
           <input
@@ -354,9 +390,12 @@ const ProductTable = () => {
         </div >
                 
         <div className="flex items-center justify-between mb-4">
-          <p className="">Click a table header to apply  sorting functions. Total Product : {data?.total}</p>
+          <p className="">Click a table header to apply  sorting functions.</p>
           <Link to={'/dashboard/product/createProduct'}  className="self-center px-2 py-1 text-white bg-indigo-500 rounded-lg hover:bg-indigo-600">Add Product</Link>
         </div>
+        
+        
+        
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 rounded">
@@ -471,7 +510,7 @@ const ProductTable = () => {
             </button>
           </div>
         </div> */}
-        <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-2 mt-4 text-sm text-gray-700 sm:flex-row">
                 <div className="flex items-center mb-4 sm:mb-0">
                     <span className="mr-2 text-copy-primary/60">Items per page</span>
                     <select
