@@ -22,7 +22,8 @@ function App() {
         try {
             if (userData.isLogin) {
                 setLoading(false)
-                navigate("/dashboard/product/createProduct")
+                // navigate("/dashboard/product/createProduct")
+                navigate("/dashboard")
             } else {
                 setLoading(false)
                 const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
@@ -30,7 +31,7 @@ function App() {
                       const { accessToken, refreshToken, id, name, email } = userSessionData
                       dispatch(addUserDetails({ accessToken, refreshToken, userId:id, userName:name, useremail:email,isLogin:true }))
                       // TODO: navigate to home dashboard
-                      navigate('/', { replace: true })
+                      navigate('/dashboard', { replace: true })
                       setLoading(false)
                   }else{
                       navigate('/dashboard/auth/login',{replace:true})
