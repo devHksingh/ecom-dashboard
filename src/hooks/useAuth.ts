@@ -2,10 +2,10 @@
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../app/store"
 import { addUserDetails } from "../features/auth/authSlice"
-import { useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 
 const useAuth = () => {
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const userData = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch()
     if (!userData.accessToken ||!userData.isLogin) {
@@ -16,7 +16,7 @@ const useAuth = () => {
             
             
         }else{
-            navigate('/dashboard/auth/login',{replace:true})
+            // navigate('/auth/login',{replace:true})
             
         }
     }

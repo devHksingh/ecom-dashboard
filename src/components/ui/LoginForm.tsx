@@ -113,7 +113,7 @@ const LoginForm = () => {
             Don&apos;t have an Account?{" "}
             <span
               className="font-semibold cursor-pointer"
-              onClick={() => navigate('/dashboard/auth/register')}
+              onClick={() => navigate('/auth/register')}
             >
               Create Account
             </span>

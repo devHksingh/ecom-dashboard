@@ -22,24 +22,24 @@ function App() {
         try {
             if (userData.isLogin) {
                 setLoading(false)
-                navigate("/dashboard/product/createProduct")
+                navigate("/product/createProduct")
             } else {
                 setLoading(false)
                 const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
                   if (userSessionData.accessToken) {
                       const { accessToken, refreshToken, id, name, email } = userSessionData
                       dispatch(addUserDetails({ accessToken, refreshToken, id, name, email }))
-                      navigate('/dashboard/product/createProduct', { replace: true })
+                      navigate('/product/createProduct', { replace: true })
                       setLoading(false)
                   }else{
-                      navigate('/dashboard/auth/login',{replace:true})
+                      navigate('/auth/login',{replace:true})
                       setLoading(false)
                   }
             }
         } catch (error) {
             console.error('Navigation error:', error)
             setLoading(false)
-            navigate("/dashboard/auth/login")
+            navigate("/auth/login")
         }
     }
 

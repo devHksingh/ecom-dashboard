@@ -50,7 +50,7 @@ const UsersTable = () => {
       onSuccess:()=>{
         dispatch(deleteUser())
         sessionStorage.removeItem('user')
-        navigate('/dashboard/auth/login')
+        navigate('/auth/login')
       }
     })
     
