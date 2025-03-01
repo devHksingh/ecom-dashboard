@@ -106,7 +106,7 @@ const ProductEditForm = () => {
         sessionStorage.removeItem('user')
         sessionStorage.setItem('user',JSON.stringify(userSessionData))
       }
-      navigate("/product/allProducts")
+      navigate("/dashboard/product/allProducts")
     },
     onError: async(err: AxiosError<ErrorResponse>) => {
       const message = err.response?.data?.message || "Error while updating product"
@@ -121,7 +121,7 @@ const ProductEditForm = () => {
         dispatch(deleteUser())
         sessionStorage.clear()
         await logoutUser()
-        navigate('/auth/login')
+        navigate('/dashboard/auth/login')
       }
     }
   })
@@ -361,7 +361,7 @@ const ProductEditForm = () => {
           <div className="flex items-center justify-end space-x-4">
             <button
               type="button"
-              onClick={() => navigate("/product/allProducts")}
+              onClick={() => navigate("/dashboard/product/allProducts")}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Cancel

@@ -32,7 +32,7 @@ const RegisterPage = () => {
     mutationFn:registerUser,
     onSuccess:(response)=>{
       if(response.data.success){
-        navigate('/auth/login')
+        navigate('/dashboard/auth/login')
       }
     },
     onError:(res)=>{
@@ -120,7 +120,7 @@ const RegisterPage = () => {
             Already have an Account?{" "}
             <span
               className="font-semibold cursor-pointer"
-              onClick={() => navigate('/auth/login')}
+              onClick={() => navigate('/dashboard/auth/login')}
             >
               Try Login
             </span>

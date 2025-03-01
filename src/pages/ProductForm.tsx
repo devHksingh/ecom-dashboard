@@ -107,7 +107,7 @@ const ProductForm = () => {
       sessionStorage.removeItem('user')
       sessionStorage.setItem('user',JSON.stringify(userSessionData))
     }
-    navigate("/product/allProducts")
+    navigate("/dashboard/product/allProducts")
     // Marks data as stale → Immediately refetches the data from the server
     
     await queryClient.refetchQueries({ queryKey: ['products'] });

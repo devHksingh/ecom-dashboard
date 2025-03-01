@@ -114,7 +114,7 @@ const ProductTable = () => {
     onSuccess:()=>{
       dispatch(deleteUser())
       sessionStorage.removeItem('user')
-      navigate('/auth/login')
+      navigate('/dashboard/auth/login')
     }
   })
 
@@ -137,12 +137,12 @@ const ProductTable = () => {
     console.log("View product:", id);
     
     // setId(id)
-    navigate(`/product/singleProduct/${id}`)
+    navigate(`/dashboard/product/singleProduct/${id}`)
   }
 
   const handleEditAction = (id: string) => {
     console.log("Edit product:", id);
-    navigate(`/product/editProduct/${id}`)
+    navigate(`/dashboard/product/editProduct/${id}`)
   }
 
   const handleDeleteAction = (id:string)=>{

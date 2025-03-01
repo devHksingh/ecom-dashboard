@@ -17,7 +17,7 @@ const SingleProductPage = () => {
         onSuccess:async()=>{
             toast.success('Proudct is deleted successfully.Redirecting to product table page',{position:'top-right'})
             await queryClient.invalidateQueries({ queryKey: ["products"] });
-            navigate('/product/allProducts')
+            navigate('/dashboard/product/allProducts')
         }
       })
     const {id} = useParams()
