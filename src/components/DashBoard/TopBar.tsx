@@ -16,8 +16,8 @@ const TopBar = () => {
   const userData = useSelector((state:RootState)=> state.auth)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  // const sessionData = sessionStorage.get("user")
   
+  // const sessionData = sessionStorage.get("user")
   
   useEffect(() => {
     if (userData.isLogin) {
@@ -31,7 +31,7 @@ const TopBar = () => {
   
 
   const mutation = useMutation({
-    mutationKey:["logoutUser"],
+    mutationKey:["dashboardLogoutUser"],
     mutationFn:logoutUser,
     onError:()=>{},
     onSuccess:()=>{
@@ -47,10 +47,10 @@ const TopBar = () => {
   }
 
   const handleLogin = ()=>{
-    navigate('/auth/login')
+    navigate('/dashboard/auth/login')
   }
   const handleSignUp = ()=>{
-    navigate('/auth/register')
+    navigate('/dashboard/auth/register')
   }
   
   return (
