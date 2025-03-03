@@ -9,7 +9,7 @@ const DashboardLayout = () => {
  
     
   return (
-    <div className="grid grid-cols-[13.75rem,_1fr] gap-4 p-4">
+    <div className="grid grid-cols-[3.8rem,1fr] md:grid-cols-[13.75rem,_1fr] gap-4 p-4 grid-flow-col-dense">
         <SideBar/>
         <Outlet/>
         
