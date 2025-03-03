@@ -25,8 +25,8 @@ const AccountToggle = () => {
           className="rounded shadow size-8 shrink-0 bg-violet-500"
         />
         <div className="text-start ml-[-14%]">
-          <span className="block text-sm font-bold text-copy-primary">{isLoginUser?`${userName}`:"UserName"}</span>
-          <span className="block text-xs font-medium text-copy-secondary"> {isLoginUser?`${userEmail}`:"Email Id"}</span>
+          <span className="hidden text-sm font-bold md:block text-copy-primary">{isLoginUser?`${userName}`:"UserName"}</span>
+          <span className="hidden text-xs font-medium md:block text-copy-secondary"> {isLoginUser?`${userEmail}`:"Email Id"}</span>
         </div>
 
         <ChevronsUpDown strokeWidth={1} className="ml-5 text-copy-primary" />
