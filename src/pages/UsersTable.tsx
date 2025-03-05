@@ -165,28 +165,28 @@ const UsersTable = () => {
     setSkip((prev)=> prev+limit)
   }
   
-    if (isError) {
-        const axiosError = error as AxiosError<ErrorResponse>; 
-        const errorMessage =
-          axiosError.response?.data?.message || "Something went wrong!.Error loading user details. Please try again later.Or refresh the page";
-        
-        if(axiosError.status === (401 )){
-            console.error("axiosError:", axiosError.status);
-            
-            mutation.mutate()
-            
-        }
-        return (
-          <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
-            { errorMessage }
-          </div>
-        );
+  if (isError) {
+      const axiosError = error as AxiosError<ErrorResponse>; 
+      const errorMessage =
+        axiosError.response?.data?.message || "Something went wrong!.Error loading user details. Please try again later.Or refresh the page";
+      
+      if(axiosError.status === (401 )){
+          console.error("axiosError:", axiosError.status);
+          
+          mutation.mutate()
+          
       }
-    
-    if ( isLoading ) {
-        return <TableLoader />;
-      }
-    
+      return (
+        <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
+          { errorMessage }
+        </div>
+      );
+    }
+  
+  if ( isLoading ) {
+      return <TableLoader />;
+    }
+  
     console.log("table.getState()",table.getState())
     console.log("table.getPageCount()",table.getPageCount())
     console.log("table.getPageCount()",table.getPageCount())
