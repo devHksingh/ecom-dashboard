@@ -122,8 +122,10 @@ export const forcedLogout = async ()=>{
 }
 // api for get all order details
 
-export const getAllOrders = async ()=>{
-    const response = await api.get('/api/v1/orders/getAllOrder')
+export const getAllOrders = async (limit=5,skip=0)=>{
+    const response = await api.get('/api/v1/orders/getAllOrderByLimitAndSkip',{
+        params:{limit,skip}
+    })
     console.log(response)
     return response.data
 }
