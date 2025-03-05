@@ -11,6 +11,7 @@ import ProductTable from "./pages/ProductTable";
 import SingleProductPage from "./pages/SingleProductPage";
 import ProductEditForm from "./pages/ProductEditForm";
 import UsersTable from "./pages/UsersTable";
+import OrderTable from "./pages/OrderTable";
 // import FormProduct from "./pages/FormProduct";
 
 // const router = createBrowserRouter([
@@ -105,6 +106,14 @@ const router = createBrowserRouter([
             {
               path:'',
               element:<UsersTable/>
+            }
+          ]
+        },{
+          path:'order',
+          children:[
+            {
+              path:'',
+              element:<OrderTable/>
             }
           ]
         }
