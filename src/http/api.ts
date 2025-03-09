@@ -14,19 +14,19 @@ api.interceptors.request.use((config) => {
     let sessionAccessToken
     let sessionRefreshToken
     // add logic for insert  sessionToken inplace of stateToken if !token not found
-    console.log("accessToken, refreshToken",accessToken, refreshToken);
-    if(!accessToken){
+    console.log("accessToken, refreshToken", accessToken, refreshToken);
+    if (!accessToken) {
         const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
         sessionAccessToken = userSessionData.accessToken
         sessionRefreshToken = userSessionData.refreshToken
-    
-        console.log("sessionAccessToken",sessionAccessToken)
+
+        console.log("sessionAccessToken", sessionAccessToken)
     }
     if (accessToken && refreshToken) {
-        config.headers.Authorization = accessToken ;
+        config.headers.Authorization = accessToken;
         config.headers.refreshToken = refreshToken;
-    }else{
-        config.headers.Authorization =  sessionAccessToken;
+    } else {
+        config.headers.Authorization = sessionAccessToken;
         config.headers.refreshToken = sessionRefreshToken;
     }
 
@@ -78,12 +78,12 @@ export const fetchSingleProduct = async (id: string) => {
 
 // delete single product
 
-export const deleteSingleProduct = async(id:string)=>{
+export const deleteSingleProduct = async (id: string) => {
     return api.delete(`/api/v1/products/${id}`)
 }
 // update single product
-export const updateProduct = async (id:string,data:FormData)=>{
-    console.log("product id ",id)
+export const updateProduct = async (id: string, data: FormData) => {
+    console.log("product id ", id)
     console.log(data)
     return api.patch(`/api/v1/products/update/${id}`, data, {
         headers: {
@@ -94,38 +94,44 @@ export const updateProduct = async (id:string,data:FormData)=>{
 
 // logout api
 
-export const logoutUser = async()=>{
+export const logoutUser = async () => {
     return api.get('/api/v1/users/logout')
 }
 
 // getallUser
 
-export const allUser = async(limit = 10, skip = 0)=>{
-    return  api.get('/api/v1/users/admin/getAlluserWithLimt',{
+export const allUser = async (limit = 10, skip = 0) => {
+    return api.get('/api/v1/users/admin/getAlluserWithLimt', {
         params: { limit, skip }
     })
 }
 
-export const forcedLogout = async ()=>{
+export const forcedLogout = async () => {
     const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
-    console.log("userSessionData ---------------",userSessionData);
-    
+    console.log("userSessionData ---------------", userSessionData);
+
     const userId = userSessionData.id
-    console.log("UserID IN API : ",userId)
-    const data = {userId:userId}
-    console.log("UserID IN API : ",data)
-    const response = await api.post('/api/v1/users/forcedLogout',data );
-    console.log("Logout response : ",response)
-    
-    
+    console.log("UserID IN API : ", userId)
+    const data = { userId: userId }
+    console.log("UserID IN API : ", data)
+    const response = await api.post('/api/v1/users/forcedLogout', data);
+    console.log("Logout response : ", response)
+
+
     return response;
 }
 // api for get all order details
 
-export const getAllOrders = async (limit=5,skip=0)=>{
-    const response = await api.get('/api/v1/orders/getAllOrderByLimitAndSkip',{
-        params:{limit,skip}
+export const getAllOrders = async (limit = 5, skip = 0) => {
+    const response = await api.get('/api/v1/orders/getAllOrderByLimitAndSkip', {
+        params: { limit, skip }
     })
     console.log(response)
+    return response.data
+}
+
+export const getgraphData = async (year = 2025) => {
+    const data = { year }
+    const response = await api.post('/api/v1/orders/getgraphData', data)
     return response.data
 }
