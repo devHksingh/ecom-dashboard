@@ -68,7 +68,7 @@ const UsersTable = () => {
             // setNextPage(fetchUserData.nextPage)
             console.log("fetchUserData.currentPage",fetchUserData.currentPage);
             
-            // TODO: Not updating token?
+            
             if(fetchUserData.isAccessTokenExp){
                  dispatch(updateAccessToken(fetchUserData.accessToken))
                 
