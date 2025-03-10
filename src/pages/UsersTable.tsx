@@ -276,7 +276,7 @@ const UsersTable = () => {
         
             <div className="flex flex-col items-center justify-between mt-4 text-sm text-gray-700 sm:flex-row">
                 <div className="flex items-center mb-4 sm:mb-0">
-                    <span className="mr-2 text-copy-primary/60">Items per page</span>
+                    <span className="mr-2 text-copy-primary/60">Users per page</span>
                     <select
                     value={table.getState().pagination.pageSize}
                     className="p-2 text-black border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"

@@ -120,7 +120,7 @@ const OrderTable = () => {
             <div className="grid gap-4 auto-rows-min md:grid-cols-3">
               <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
                 <h2 className="flex justify-between w-full font-semibold capitalize text-md">Total sale Amount: <span><User2Icon size={14}/></span></h2>
-                <span className="font-mono text-4xl font-bold">{data.totalSaleAmount}</span>
+                <span className="font-mono text-4xl font-bold">${data.totalSaleAmount}</span>
               </div>
               <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
                 <h2 className="flex justify-between w-full font-semibold text-md">Number of order last 30 days: <span ><User2Icon size={14} /></span></h2>
@@ -264,9 +264,26 @@ const OrderTable = () => {
               </div>
             </div> */}
             {/* graph */}
+            {graphData && (
+              <div className="p-1 mt-6">
+                <span className="mr-2 text-copy-primary/60">Select year</span>
+                <select 
+                className="p-2 text-black border border-gray-300 rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 ring-2"
+                onChange={(e)=>{
+                  const year = e.target.value
+                  setYear(Number(year))
+                }}>
+                  <option value="2024">2024</option>
+                  <option value="2025" >2025</option>
+                </select>
+            </div>
+            )
+            }
             {
+              
               graphData &&(
                 <div className="grid md:grid-cols-2">
+                  
                   <div className="h-64 gap-2 px-4 mt-6 ">
                     
                     <ResponsiveContainer width="100%" height="100%">
