@@ -193,6 +193,18 @@ const OrderTable = () => {
         </div>
       ),
     }),
+    columnHelper.accessor('orderStatus', {
+      header: () => <div className="flex items-center gap-1">Status</div>,
+      cell: info => (
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+          ${info.getValue() === 'PROCESSED' ? 'bg-red-100 text-red-800' : 
+            info.getValue() === 'DELIVERED' ? 'bg-green-100 text-green-800' : 
+            info.getValue() === 'SHIPPED' ? 'bg-yellow-100 text-yellow-800' : 
+            'bg-gray-100 text-gray-800'}`}>
+          {info.getValue()}
+        </span>
+      ),
+    }),
     columnHelper.accessor('_id',{
       header: () => <div className="flex items-center gap-1 capitalize">Actions</div>,
       cell: info =>(
