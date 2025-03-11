@@ -233,7 +233,8 @@ const OrderTable = () => {
    const table = useReactTable({
     data:orders,
     columns,
-    getCoreRowModel:getCoreRowModel()
+    getCoreRowModel:getCoreRowModel(),
+     getSortedRowModel: getSortedRowModel(),
    })
 
     if (isError) {
