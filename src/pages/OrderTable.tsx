@@ -193,6 +193,10 @@ const OrderTable = () => {
         </div>
       ),
     }),
+    columnHelper.accessor('quantity', {
+      header: () => <div className="flex items-center gap-1">Qty</div>,
+      cell: info => <div className="text-sm text-gray-500">{info.getValue()}</div>,
+    }),
     columnHelper.accessor('orderStatus', {
       header: () => <div className="flex items-center gap-1">Status</div>,
       cell: info => (
