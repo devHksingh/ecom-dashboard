@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useEffect, useState,useMemo } from "react"
 import { forcedLogout, getAllOrders, getgraphData } from "../http/api"
 import { useDispatch } from "react-redux"
 // import { RootState } from "../app/store"
@@ -19,14 +19,26 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import { User2Icon } from "lucide-react"
+import { Eye, Pencil, User2Icon } from "lucide-react"
+// import { createColumnHelper, useReactTable } from "@tanstack/react-table"
+// import { OrderTable } from "../types/order"
+import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { 
+  useReactTable, 
+  getCoreRowModel, 
+  getSortedRowModel, 
+  getFilteredRowModel,
+  flexRender,
+  createColumnHelper
+} from '@tanstack/react-table';
+import {  OrderTableProps } from "../types/order"
 
 interface ErrorResponse {
     message: string;
   }
 
 const OrderTable = () => {
-    const [limit,setLimit]= useState(5)
+    const [limit,setLimit]= useState(10)
     const [skip,setSkip]= useState(0)
     const [orderData,setOrderData]= useState(null)
     const [past30DaysOrders,setPast30DaysOrders]= useState(null)
@@ -34,6 +46,8 @@ const OrderTable = () => {
     const [top5LeastBought,setTop5LeastBought]= useState(null)
     const [graphData,setGraphData] = useState(null)
     const [year,setYear] = useState(2025)
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [orders,setOrders] = useState([])
     
     // redux 
     // const userData = useSelector((state:RootState)=>state.auth)
@@ -82,31 +96,152 @@ const OrderTable = () => {
             setPast30DaysOrders(data.past30DaysOrders)
             setTop5MostBought(data.top5MostBought)
             setTop5LeastBought(top5LeastBought)
+            setOrders(data.totalOrdersArr)
         }
     },[data, dispatch, top5LeastBought])
-    if (isError) {
-        const axiosError = error as AxiosError<ErrorResponse>; 
-        const errorMessage =
-          axiosError.response?.data?.message || "Something went wrong!.Error loading user details. Please try again later.Or refresh the page";
-        
-        if(axiosError.status === (401 )){
-            console.error("axiosError:", axiosError.status);
-            
-            mutation.mutate()
-            
-        }
-        return (
-          <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
-            { errorMessage }
-          </div>
-        );
-    }
     
-    if ( isLoading || graphDataLoading ) {
-        return <TableLoader />;
-    }
     
     console.log("graphData",graphData);
+
+    // table
+
+    
+  
+  // Format date
+  const formatDate = (dateString:string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+  
+  // Format currency
+  // const formatCurrency = (amount, currency) => {
+  //   const symbols = {
+  //     'USD': '$',
+  //     'EUR': '€',
+  //     'INR': '₹'
+  //   };
+    
+  //   return `${symbols[currency] || ''}${amount}`;
+  // };
+  const formatPrice = (price: number, currency: string) => {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency, 
+    }).format(price);
+    };
+
+    // Handle view and edit actions
+  const handleViewAction = (id: string) => {
+    console.log("View product:", id);
+    
+    // setId(id)
+    navigate(`/dashboard/product/singleProduct/${id}`)
+  }
+  const handleEditAction = (id: string) => {
+    console.log("Edit product:", id);
+    navigate(`/dashboard/product/editProduct/${id}`)
+  }
+
+   const columnHelper = createColumnHelper<OrderTableProps>()
+   
+   const columns = [
+    columnHelper.accessor('productDetail.imageUrl',{
+      cell:(info)=>(
+        <div>
+        <div className="flex-shrink-0 w-10 h-10">
+        <img 
+          className="object-cover w-10 h-10 rounded-md" 
+          src={info.row.original.productDetail.imageUrl} 
+          alt={info.row.original.productDetail.name} 
+        />
+        </div>
+          
+        </div>
+      // <div>
+      //   <img src={info.row.original.productDetail.imageUrl} alt={info.row.original.productDetail.name} className="object-cover w-10 h-10 rounded-md"/>
+      // </div>
+      ),
+      header:()=><div>Image</div>
+    }),
+    columnHelper.accessor('productDetail.name',{
+      cell:(info)=>(<div className="text-sm font-medium text-gray-900">{info.getValue()}</div>),
+      header:()=><div className="flex items-center gap-1 capitalize">product Name</div>
+    }),
+    columnHelper.accessor('userDetails.userEmail',{
+      cell:(info)=>(<div className="text-sm text-gray-500">{info.getValue()}</div>),
+      header:()=><div className="flex items-center gap-1 capitalize">user email</div>
+    }),
+    columnHelper.accessor('trackingId',{
+      cell:(info)=> (<div className="text-sm text-gray-500">{info.getValue()}</div>),
+      header:() => <div className="flex items-center gap-1">Tracking ID</div>
+    }),
+    columnHelper.accessor('orderPlaceOn', {
+      header: () => <div className="flex items-center gap-1 capitalize">Order Date</div>,
+      cell: info => (<div className="text-gray-800">{formatDate(info.getValue())}</div>),
+    }),
+    columnHelper.accessor('totalPrice', {
+      header: () => <div className="flex items-center gap-1 capitalize">Price</div>,
+      cell: info => (
+        <div className="text-sm font-medium text-gray-900">
+          {formatPrice(info.getValue(), info.row.original.productDetail.currency)}
+        </div>
+      ),
+    }),
+    columnHelper.accessor('_id',{
+      header: () => <div className="flex items-center gap-1 capitalize">Actions</div>,
+      cell: info =>(
+        <div className="flex gap-2">
+          <button 
+            onClick={() => handleViewAction(info.getValue())}
+            className="p-1 rounded hover:bg-gray-100 "
+          >
+            <Eye className=" text-sky-500 hover:text-sky-600" size={18} />
+          </button>
+          <button 
+            onClick={() => handleEditAction(info.getValue())}
+            className="p-1 rounded hover:bg-gray-100"
+          >
+            <Pencil className="text-orange-600 hover:text-orange-500" size={18} />
+          </button>
+        </div>
+      )
+    })
+   ]
+   
+   const table = useReactTable({
+    data:orders,
+    columns,
+    getCoreRowModel:getCoreRowModel()
+   })
+
+    if (isError) {
+      const axiosError = error as AxiosError<ErrorResponse>; 
+      const errorMessage =
+        axiosError.response?.data?.message || "Something went wrong!.Error loading user details. Please try again later.Or refresh the page";
+      
+      if(axiosError.status === (401 )){
+          console.error("axiosError:", axiosError.status);
+          
+          mutation.mutate()
+          
+      }
+      return (
+        <div className="p-4 text-4xl font-bold text-center text-red-600 bg-red-100 rounded-md">
+          { errorMessage }
+        </div>
+      );
+  }
+  
+  if ( isLoading || graphDataLoading ) {
+      return <TableLoader />;
+  }
+    console.log("orders table",table.getHeaderGroups());
     
   return (
     <div className="container grid w-full grid-cols-1 p-2 bg-dashboard/50">
@@ -319,7 +454,108 @@ const OrderTable = () => {
                 </div>
               )
             }
+
+            {/* table */}
             
+            {/* <div className="h-screen p-2">
+              <table>
+                <thead>
+                  {table.getHeaderGroups().map(hearderGroup =>(
+                    <tr key={hearderGroup.id}>
+                      {hearderGroup.headers.map(header =>(
+                        <th key={header.id}>
+                          {header.isPlaceholder ? null :
+                          flexRender(
+                          header.column.columnDef.header,
+                          header.getContext())}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody>
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+              </table>
+            </div> */}
+            <div className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-xl font-bold">Orders</div>
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search orders..."
+            className="py-2 pl-8 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={globalFilter ?? ''}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      <div className="overflow-x-auto border border-gray-200 rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th 
+                    key={header.id}
+                    className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer"
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    <div className="flex items-center gap-1">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {header.column.getCanSort() && (
+                        <div className="flex">
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === 'asc' ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="w-4 h-4" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {table.getRowModel().rows.map(row => (
+              <tr key={row.id} className="hover:bg-gray-50">
+                {row.getVisibleCells().map(cell => (
+                  <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {table.getRowModel().rows.length === 0 && (
+          <div className="px-6 py-4 text-center text-gray-500">
+            No orders found.
+          </div>
+        )}
+      </div>
+    </div>
         </div>
     </div>
   )
