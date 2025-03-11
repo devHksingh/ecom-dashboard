@@ -233,8 +233,13 @@ const OrderTable = () => {
    const table = useReactTable({
     data:orders,
     columns,
+    state: {
+      
+      globalFilter
+    },
     getCoreRowModel:getCoreRowModel(),
      getSortedRowModel: getSortedRowModel(),
+     getFilteredRowModel: getFilteredRowModel(),
    })
 
     if (isError) {
@@ -507,11 +512,11 @@ const OrderTable = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="text-xl font-bold">Orders</div>
         <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <Search className="absolute w-4 h-4 text-gray-500 left-2 top-3" />
           <input
             type="text"
             placeholder="Search orders..."
-            className="py-2 pl-8 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="py-2 pl-8 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-stone-900"
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
           />
