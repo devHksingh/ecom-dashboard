@@ -40,12 +40,23 @@ const SingleProductPage = () => {
     const timeAgo = (date: string) => {
         return   new Date(date).toLocaleString();
       }
-    const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: currency, 
-    }).format(price);
-    };
+    // const formatPrice = (price: number, currency: string) => {
+    // return new Intl.NumberFormat("en-US", {
+    //     style: "currency",
+    //     currency: currency, 
+    // }).format(price);
+    // };
+    const formatPrice = (amount:number, currency:string) => {
+        const symbols: Record<string, string> = {
+          'USD': '$',
+          'EUR': '€',
+          'INR': '₹',
+           'RUB':'₽',
+           'GBP':'£'
+        };
+        
+        return `${symbols[currency]|| '₹' } ${amount}`;
+      };
     const handleUpdateBtn =(id:string)=>{
         console.log("handleUpdateBtn",id);
     }
