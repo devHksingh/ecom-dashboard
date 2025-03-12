@@ -19,7 +19,7 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import { Eye, Pencil, User2Icon } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, Pencil, User2Icon } from "lucide-react"
 // import { createColumnHelper, useReactTable } from "@tanstack/react-table"
 // import { OrderTable } from "../types/order"
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
@@ -29,7 +29,8 @@ import {
   getSortedRowModel, 
   getFilteredRowModel,
   flexRender,
-  createColumnHelper
+  createColumnHelper,
+  getPaginationRowModel
 } from '@tanstack/react-table';
 import {  OrderTableProps } from "../types/order"
 
@@ -48,6 +49,10 @@ const OrderTable = () => {
     const [year,setYear] = useState(2025)
     const [globalFilter, setGlobalFilter] = useState('');
     const [orders,setOrders] = useState([])
+    const [currentPage, setCurrentPage] = useState(null)
+      // const [previousPage, setPreviousPage] = useState(null)
+      const [totalPages, setTotalPages] = useState(null)
+      const [totalOrders, setTotalOrders] = useState(null)
     
     // redux 
     // const userData = useSelector((state:RootState)=>state.auth)
@@ -97,6 +102,9 @@ const OrderTable = () => {
             setTop5MostBought(data.top5MostBought)
             setTop5LeastBought(top5LeastBought)
             setOrders(data.totalOrdersArr)
+            setTotalPages(data.totalPages)
+            setCurrentPage(data.currentPage)
+            setTotalOrders(data.totalOrders)
         }
     },[data, dispatch, top5LeastBought])
     
@@ -146,6 +154,16 @@ const OrderTable = () => {
   const handleEditAction = (id: string) => {
     console.log("Edit product:", id);
     navigate(`/dashboard/product/editProduct/${id}`)
+  }
+
+  // pageination btn
+  const handlePrevBtn = ()=>{
+    console.log("skip -----: ",skip)
+    console.log("limit ------: ",limit)
+    setSkip((prev)=>prev-limit)
+  }
+  const handleNextBtn = ()=>{
+    setSkip((prev)=> prev+limit)
   }
 
    const columnHelper = createColumnHelper<OrderTableProps>()
@@ -240,6 +258,9 @@ const OrderTable = () => {
     getCoreRowModel:getCoreRowModel(),
      getSortedRowModel: getSortedRowModel(),
      getFilteredRowModel: getFilteredRowModel(),
+     getPaginationRowModel: getPaginationRowModel(),
+         manualPagination: true,
+         pageCount: Math.ceil((data?.totalOrders || 0) / limit)
    })
 
     if (isError) {
@@ -577,7 +598,50 @@ const OrderTable = () => {
           </div>
         )}
       </div>
-    </div>
+            </div>
+            <div className="flex flex-col items-center justify-between gap-2 mt-4 text-sm text-gray-700 sm:flex-row">
+                            <div className="flex items-center mb-4 sm:mb-0">
+                                <span className="mr-2 text-copy-primary/60">Items per page</span>
+                                <select
+                                value={table.getState().pagination.pageSize}
+                                className="p-2 text-black border border-gray-300 rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:ring-2"
+                                onChange={
+                                    (e)=>{
+                                        const newLimit = Number(e.target.value)
+                                        setLimit(newLimit)
+                                        table.setPageSize(newLimit)
+                                    }
+                                }
+                                >
+                                {[5,10,20,30].map((pageSize)=>(
+                                    <option key={pageSize} value={pageSize}>{pageSize}</option>
+                                ))}
+                            </select>
+                            </div>
+                            <span className="text-copy-primary/90">Total order {data.totalOrders}</span>
+                            <div className="flex items-center gap-4">
+                                <button 
+                                    onClick={handlePrevBtn}
+                                    disabled={currentPage === 1 || isLoading}
+                                    aria-label="Previous Page Button"
+                                    className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                                >   
+                                    
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <span className="ml-1 text-copy-primary/90">{currentPage} of {totalPages}</span>
+                                <button 
+                                    onClick={handleNextBtn}
+                                    disabled={currentPage === totalPages || isLoading}
+                                    aria-label="Next Page Button"
+                                    className="p-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
+                                >
+                                    
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                            
+                        </div>
         </div>
     </div>
   )
