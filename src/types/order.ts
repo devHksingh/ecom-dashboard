@@ -18,4 +18,13 @@ export interface OrderTableProps {
     quantity:number,
 }
 
+export interface OrderBoughtItem{
+    name:string,
+    value:{
+        quantity:number,
+        price:number,
+        url:string,
+    },
+
+}
 
