@@ -32,7 +32,7 @@ import {
   createColumnHelper,
   getPaginationRowModel
 } from '@tanstack/react-table';
-import {  OrderTableProps } from "../types/order"
+import {  OrderBoughtItem, OrderTableProps } from "../types/order"
 
 
 interface ErrorResponse {
@@ -305,7 +305,7 @@ const OrderTable = () => {
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
             <h2 className="flex justify-between w-full font-semibold capitalize text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between md:flex-row">{data.top5MostBought.map((item,index:number)=>(
+            <span className="flex flex-col items-center justify-between md:flex-row">{data.top5MostBought.map((item:OrderBoughtItem,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
             {/* <div className="flex flex-col gap-1 text-sm font-thin">
               <span>{item.name}</span>
@@ -321,7 +321,7 @@ const OrderTable = () => {
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
             <h2 className="flex justify-between w-full font-semibold text-md">top 5 Most Expensive Orders:: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5MostExpensiveOrders.map((item,index:number)=>(
+            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5MostExpensiveOrders.map((item:OrderTableProps,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
             {/* <div className="flex flex-col gap-1 text-sm font-thin">
               <span>{item.name}</span>
@@ -337,7 +337,7 @@ const OrderTable = () => {
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
             <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Expensive Orders: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastExpensiveOrders.map((item,index:number)=>(
+            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastExpensiveOrders.map((item:OrderTableProps,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
             {/* <div className="flex flex-col gap-1 text-sm font-thin">
               <span>{item.name}</span>
@@ -353,7 +353,7 @@ const OrderTable = () => {
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
             <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Bought: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastBought.map((item,index:number)=>(
+            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastBought.map((item:OrderBoughtItem,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
             {/* <div className="flex flex-col gap-1 text-sm font-thin">
               <span>{item.name}</span>
@@ -442,16 +442,15 @@ const OrderTable = () => {
         {/* graph */}
         {graphData && (
           <div className="p-1 mt-6">
-            <span className="mr-2 text-copy-primary/60">Select year</span>
-            <select 
+          <span className="mr-2 text-copy-primary/60">Select year</span>
+          <select 
             className="p-2 text-black border border-gray-300 rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 ring-2"
-            onChange={(e)=>{
-              const year = e.target.value
-              setYear(Number(year))
-            }}>
-              <option value="2024">2024</option>
-              <option value="2025" >2025</option>
-            </select>
+            value={year} // Set the selected value dynamically
+            onChange={(e) => setYear(Number(e.target.value))}
+          >
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
         </div>
         )
         }
