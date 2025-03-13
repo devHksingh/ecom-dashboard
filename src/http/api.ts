@@ -135,3 +135,8 @@ export const getgraphData = async (year = 2025) => {
     const response = await api.post('/api/v1/orders/getgraphData', data)
     return response.data
 }
+
+export const getSingleOrder = async(id:string)=>{
+    const response = await api.get(`/api/v1/orders/${id}`)
+    return response.data
+}
