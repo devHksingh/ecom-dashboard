@@ -147,7 +147,7 @@ const OrderTable = () => {
     console.log("View product:", id);
     
     // setId(id)
-    navigate(`/dashboard/product/singleProduct/${id}`)
+    navigate(`/dashboard/order/singleOrder/${id}`)
   }
   const handleEditAction = (id: string) => {
     console.log("Edit product:", id);
@@ -445,7 +445,7 @@ const OrderTable = () => {
           <span className="mr-2 text-copy-primary/60">Select year</span>
           <select 
             className="p-2 text-black border border-gray-300 rounded-md shadow-sm outline-none focus:ring-indigo-500 focus:border-indigo-500 ring-2"
-            value={year} // Set the selected value dynamically
+            value={year} 
             onChange={(e) => setYear(Number(e.target.value))}
           >
             <option value="2024">2024</option>
