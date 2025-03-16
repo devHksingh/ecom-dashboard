@@ -19,7 +19,7 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import { ChevronLeft, ChevronRight, Eye, Pencil, User2Icon } from "lucide-react"
+import { Award, CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package, PackageSearch, Pencil, ShoppingBag, TrendingDown, TrendingUp, Truck, User2Icon } from "lucide-react"
 // import { createColumnHelper, useReactTable } from "@tanstack/react-table"
 // import { OrderTable } from "../types/order"
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
@@ -261,6 +261,8 @@ const OrderTable = () => {
          pageCount: Math.ceil((data?.totalOrders || 0) / limit)
    })
 
+   
+
     if (isError) {
       const axiosError = error as AxiosError<ErrorResponse>; 
       const errorMessage =
@@ -291,6 +293,160 @@ const OrderTable = () => {
             OrdersTable
         </h1>
         {/* TOP SECTION */}
+
+        {/* test */}
+        <div className="container p-4 mx-auto">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {/* Total Sale Amount */}
+        <div className="p-6 border border-blue-200 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <DollarSign className="w-6 h-6 mr-2 text-blue-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Total Sale Amount</h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-blue-700">{(data.totalSaleAmount)}</p>
+            <p className="mt-1 text-sm text-blue-600">Across all products</p>
+          </div>
+        </div>
+
+        
+
+        {/* Total order placed till now */}
+        <div className="p-6 border border-green-200 shadow-sm bg-gradient-to-br from-green-50 to-green-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <ShoppingBag className="w-6 h-6 mr-2 text-green-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Total orders </h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-green-700">{data.totalOrders}</p>
+            <p className="mt-1 text-sm text-green-600">Total order placed till now</p>
+          </div>
+        </div>
+        
+        {/* Number of order last 30 days */}
+        <div className="p-6 border border-green-200 shadow-sm bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+          <div className="flex items-center mb-4">
+            <ShoppingBag className="w-6 h-6 mr-2 text-green-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Orders (30 Days)</h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-green-700">{data.past30DaysOrders.length}</p>
+            <p className="mt-1 text-sm text-green-600">Last 30 days</p>
+          </div>
+        </div>
+
+        {/* Order Status Cards Row */}
+        <div className="p-6 border shadow-sm bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl border-amber-200">
+          <div className="flex items-center mb-4">
+            <Package className="w-6 h-6 mr-2 text-amber-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Processed</h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-amber-700">{data.productOrderStatusCount.processed}</p>
+            <p className="mt-1 text-sm text-amber-600">Orders in process</p>
+          </div>
+        </div>
+
+        <div className="p-6 border border-indigo-200 shadow-sm bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl">
+          <div className="flex items-center mb-4">
+            <Truck className="w-6 h-6 mr-2 text-indigo-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Shipped</h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-indigo-700">{data.productOrderStatusCount.shipped}</p>
+            <p className="mt-1 text-sm text-indigo-600">Orders in transit</p>
+          </div>
+        </div>
+
+        <div className="p-6 border shadow-sm bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border-emerald-200">
+          <div className="flex items-center mb-4">
+            <CheckCircle className="w-6 h-6 mr-2 text-emerald-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Delivered</h3>
+          </div>
+          <div className="mt-2">
+            <p className="text-3xl font-bold text-emerald-700">{data.productOrderStatusCount.delivered}</p>
+            <p className="mt-1 text-sm text-emerald-600">Completed orders</p>
+          </div>
+        </div>
+
+        {/* Top 5 most bought orders */}
+        <div className="p-6 border border-purple-200 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <TrendingUp className="w-6 h-6 mr-2 text-purple-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Top 5 Most Bought</h3>
+          </div>
+          <div className="mt-2">
+            <ul className="space-y-2">
+              {data.top5MostBought.map((item:OrderBoughtItem, index:number) => (
+                <li key={index} className="flex items-center justify-between pb-2 border-b border-purple-200">
+                  <span className="text-gray-700">{item.name}</span>
+                  <span className="font-medium text-purple-700">{item.value.quantity} units</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Top 5 Most Expensive Orders */}
+        <div className="p-6 border border-red-200 shadow-sm bg-gradient-to-br from-red-50 to-red-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <DollarSign className="w-6 h-6 mr-2 text-red-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Top 5 Most Expensive</h3>
+          </div>
+          <div className="mt-2">
+            <ul className="space-y-2">
+              {data.top5MostExpensiveOrders.map((item:OrderTableProps, index:number) => (
+                <li key={index} className="flex items-center justify-between pb-2 border-b border-red-200">
+                  <span className="text-gray-700">{item.productDetail.name}</span>
+                  <span className="font-medium text-red-700">{formatPrice(item.productDetail.price,"USD")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Top 5 Least Expensive Orders */}
+        <div className="p-6 border border-teal-200 shadow-sm bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <DollarSign className="w-6 h-6 mr-2 text-teal-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Top 5 Least Expensive</h3>
+          </div>
+          <div className="mt-2">
+            <ul className="space-y-2">
+              {data.top5LeastExpensiveOrders.map((item:OrderTableProps, index:number) => (
+                <li key={index} className="flex items-center justify-between pb-2 border-b border-teal-200">
+                  <span className="text-gray-700">{item.productDetail.name}</span>
+                  <span className="font-medium text-teal-700">{formatPrice(item.productDetail.price,"USD")}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Top 5 Least Bought */}
+        <div className="p-6 border border-orange-200 shadow-sm bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl md:col-span-2">
+          <div className="flex items-center mb-4">
+            <TrendingDown className="w-6 h-6 mr-2 text-orange-500" />
+            <h3 className="text-lg font-semibold text-gray-800">Top 5 Least Bought</h3>
+          </div>
+          <div className="mt-2">
+            <ul className="space-y-2">
+              {data.top5LeastBought.map((item:OrderBoughtItem, index:number) => (
+                <li key={index} className="flex items-center justify-between pb-2 border-b border-orange-200">
+                  <span className="text-gray-700">{item.name}</span>
+                  <span className="font-medium text-orange-700">{item.value.quantity} units</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+        </div>
+        
+
+        
+
         
         {/* grid */}
         <div className="grid gap-4 auto-rows-min md:grid-cols-3">
@@ -299,18 +455,15 @@ const OrderTable = () => {
             <span className="font-mono text-4xl font-bold">${data.totalSaleAmount}</span>
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold text-md">Number of order last 30 days: <span ><User2Icon size={14} /></span></h2>
+            <h2 className="flex justify-between w-full font-semibold text-md">Number of order last 30 days: <span > <PackageSearch size={14} /></span></h2>
             <span className="font-mono text-4xl font-bold">{data.totalOrders}</span>
             <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.past30DaysOrders.length} from last month</span>
           </div>
           <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between md:flex-row">{data.top5MostBought.map((item:OrderBoughtItem,index:number)=>(
+            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Top 5 most bought orders: <span> <Award size={14}/></span></h2>
+            <span className="flex flex-col flex-wrap gap-2 justify-evenly md:flex-row">{data.top5MostBought.map((item:OrderBoughtItem,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
-            {/* <div className="flex flex-col gap-1 text-sm font-thin">
-              <span>{item.name}</span>
-              <span>{item.value.price}</span>
-            </div> */}
+            
             <div className="p-1 rounded-lg bg-zinc-50">
               <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
               <span className="absolute top-0 p-1 mx-auto text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
@@ -323,10 +476,7 @@ const OrderTable = () => {
             <h2 className="flex justify-between w-full font-semibold text-md">top 5 Most Expensive Orders:: <span><User2Icon size={14}/></span></h2>
             <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5MostExpensiveOrders.map((item:OrderTableProps,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
-            {/* <div className="flex flex-col gap-1 text-sm font-thin">
-              <span>{item.name}</span>
-              <span>{item.value.price}</span>
-            </div> */}
+            
             <div className="p-1 rounded-lg bg-zinc-50">
               <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
               <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
@@ -339,10 +489,7 @@ const OrderTable = () => {
             <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Expensive Orders: <span><User2Icon size={14}/></span></h2>
             <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastExpensiveOrders.map((item:OrderTableProps,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
-            {/* <div className="flex flex-col gap-1 text-sm font-thin">
-              <span>{item.name}</span>
-              <span>{item.value.price}</span>
-            </div> */}
+            
             <div className="p-1 rounded-lg bg-zinc-50">
               <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
               <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
@@ -355,10 +502,7 @@ const OrderTable = () => {
             <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Bought: <span><User2Icon size={14}/></span></h2>
             <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastBought.map((item:OrderBoughtItem,index:number)=>(
           <div key={index} className="relative self-center cursor-pointer group">
-            {/* <div className="flex flex-col gap-1 text-sm font-thin">
-              <span>{item.name}</span>
-              <span>{item.value.price}</span>
-            </div> */}
+            
             <div className="p-1 rounded-lg bg-zinc-50">
               <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
               <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
@@ -380,65 +524,7 @@ const OrderTable = () => {
               <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  shipped: <span><User2Icon size={14}/></span></h2>
               <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.shipped}</span>
             </div>
-          </div>
-        {/* <div className="grid md:grid-cols-3">
-          <div className="flex flex-col col-span-2 gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.top5MostBought.map((item,index:number)=>(
-                <div key={index} className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-1 text-sm font-thin">
-                    <span>{item.name}</span>
-                    <span>{item.value.price}</span>
-                  </div>
-                  <div className="rounded-md bg-stone-200">
-                    <img src={item.value.url} alt={item.name} className="object-cover w-10 h-10 rounded-lg"/>
-                  </div>
-                </div>
-              ))}</span>
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.top5MostBought.map((item,index:number)=>(
-                <div key={index} className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-1 text-sm font-thin">
-                    <span>{item.name}</span>
-                    <span>{item.value.price}</span>
-                  </div>
-                  <div className="rounded-md bg-stone-200">
-                    <img src={item.value.url} alt={item.name} className="object-cover w-10 h-10 rounded-lg"/>
-                  </div>
-                </div>
-              ))}</span>
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.top5MostBought.map((item,index:number)=>(
-                <div key={index} className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-1 text-sm font-thin">
-                    <span>{item.name}</span>
-                    <span>{item.value.price}</span>
-                  </div>
-                  <div className="rounded-md bg-stone-200">
-                    <img src={item.value.url} alt={item.name} className="object-cover w-10 h-10 rounded-lg"/>
-                  </div>
-                </div>
-              ))}</span>
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold text-md">Top 5 most bought orders: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.top5MostBought.map((item,index:number)=>(
-                <div key={index} className="flex items-center justify-between gap-4">
-                  <div className="flex flex-col gap-1 text-sm font-thin">
-                    <span>{item.name}</span>
-                    <span>{item.value.price}</span>
-                  </div>
-                  <div className="rounded-md bg-stone-200">
-                    <img src={item.value.url} alt={item.name} className="object-cover w-10 h-10 rounded-lg"/>
-                  </div>
-                </div>
-              ))}</span>
-          </div>
-        </div> */}
+        </div>
         {/* graph */}
         {graphData && (
           <div className="p-1 mt-6">
@@ -497,49 +583,20 @@ const OrderTable = () => {
 
         {/* table */}
         
-        {/* <div className="h-screen p-2">
-          <table>
-            <thead>
-              {table.getHeaderGroups().map(hearderGroup =>(
-                <tr key={hearderGroup.id}>
-                  {hearderGroup.headers.map(header =>(
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null :
-                      flexRender(
-                      header.column.columnDef.header,
-                      header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-      {table.getRowModel().rows.map(row => (
-        <tr key={row.id}>
-          {row.getVisibleCells().map(cell => (
-            <td key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-          </table>
-        </div> */}
         <div className="w-full">
-  <div className="flex items-center justify-between mb-4">
-    <div className="text-xl font-bold">Orders</div>
-    <div className="relative">
-      <Search className="absolute w-4 h-4 text-gray-500 left-2 top-3" />
-      <input
-        type="text"
-        placeholder="Search orders..."
-        className="py-2 pl-8 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-stone-900"
-        value={globalFilter ?? ''}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-      />
-    </div>
-  </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-xl font-bold">Orders</div>
+            <div className="relative">
+              <Search className="absolute w-4 h-4 text-gray-500 left-2 top-3" />
+              <input
+                type="text"
+                placeholder="Search orders..."
+                className="py-2 pl-8 pr-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-stone-900"
+                value={globalFilter ?? ''}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+              />
+            </div>
+          </div>
   
   <div className="overflow-x-auto border border-gray-200 rounded-lg">
     <table className="min-w-full divide-y divide-gray-200">
@@ -645,3 +702,4 @@ const OrderTable = () => {
 }
 
 export default OrderTable
+
