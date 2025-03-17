@@ -231,7 +231,7 @@ const SingleOrderPage = () => {
             </div>
             <div className="flex justify-between py-2">
             <span className="text-gray-600">Shipping</span>
-            <span className="font-medium">{formatPrice(60,data.order.productDetail.currency)}</span>
+            <span className="font-medium">{formatPrice(Math.round(0.08*(data.order.totalPrice)),data.order.productDetail.currency)}</span>
             </div>
             <div className="flex justify-between py-2">
             <span className="text-gray-600">Tax</span>
@@ -239,7 +239,7 @@ const SingleOrderPage = () => {
             </div>
             <div className="flex justify-between py-3 mt-2 border-t border-gray-200">
             <span className="font-semibold text-gray-900">Total</span>
-            <span className="text-lg font-semibold text-gray-900">{formatPrice((data.order.totalPrice+60+Math.round(0.18*(data.order.totalPrice))),data.order.productDetail.currency)}</span>
+            <span className="text-lg font-semibold text-gray-900">{formatPrice((data.order.totalPrice+Math.round(0.08*(data.order.totalPrice))+Math.round(0.18*(data.order.totalPrice))),data.order.productDetail.currency)}</span>
             </div>
         </div>
         </div>
