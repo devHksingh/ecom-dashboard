@@ -65,16 +65,17 @@ const OrderTable = () => {
     const {data,isError,isLoading,error} = useQuery({
         queryKey:["getAllOrder",limit,skip],
         queryFn:()=>getAllOrders(limit,skip),
-        staleTime:6000,
-        refetchInterval:8000,
+        staleTime:10*1000,
+        refetchInterval:20*1000,
+        
         refetchIntervalInBackground:true
     })
     // mutation query for forced logout user in case of error (in case of access token not found)
     const {data:orderGraphData,isLoading:graphDataLoading} = useQuery({
       queryKey:["orderGraphData",year],
       queryFn:()=>getgraphData(year),
-      staleTime:6000,
-      refetchInterval:8000,
+      staleTime:10*1000,
+      refetchInterval:20*1000,
       refetchIntervalInBackground:true
     })
 
