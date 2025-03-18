@@ -13,7 +13,9 @@ const SingleProductPage = () => {
     const mutation= useMutation({
         mutationKey:["deleteProduct"],
         mutationFn:deleteSingleProduct,
-        onError:()=>{},
+        onError:()=>{
+            toast.warning('Unable to delete Proudct .Try it again',{position:'top-right'})
+        },
         onSuccess:async()=>{
             toast.success('Proudct is deleted successfully.Redirecting to product table page',{position:'top-right'})
             await queryClient.invalidateQueries({ queryKey: ["products"] });
