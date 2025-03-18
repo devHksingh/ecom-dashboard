@@ -1,11 +1,24 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { getSingleOrder } from "../http/api"
+import { getSingleOrder, updateOrderStatus } from "../http/api"
 import SingleProductLoder from "../components/skeleton/SingleProductLoder"
-import { ArrowLeft, Calendar, CreditCard, Package, Truck, User } from "lucide-react"
+import { ArrowLeft, CreditCard, Package, PackageCheck, Truck, User } from "lucide-react"
+// import { useForm } from "react-hook-form"
+// import { z } from "zod"
+// import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect, useState } from "react"
+import { ToastContainer, toast } from 'react-toastify';
+import { queryClient } from "../main"
 
+// const orderSchema = z.object({
+//     status:z.string().min(1,"Order Status is required")
+// })
 
+// type OrederStatusValue = z.infer<typeof orderSchema>
 const SingleOrderPage = () => {
+    const [orderStatus,setOrderStatus] = useState("")
+    const [trackingId,setTrackingId] = useState("")
+    
     const navigate = useNavigate()
     const {id} = useParams()
     if(!id){
@@ -14,18 +27,56 @@ const SingleOrderPage = () => {
     }
     const {data,isLoading,isError} = useQuery({
         queryKey:["singleOrder",id],
-        queryFn:()=>getSingleOrder(id)
+        queryFn:()=>getSingleOrder(id),
+        enabled:!!id
     })
-
+    const mutation= useMutation({
+            mutationKey:["deleteProduct"],
+            mutationFn:({ orderId, newOrderStatus }: { orderId: string; newOrderStatus: string } )=>updateOrderStatus(orderId,newOrderStatus),
+            onError:()=>{
+                toast.warning('Unable to update order status .Try it again',{position:'top-right'})
+            },
+            onSuccess:async()=>{
+                await queryClient.invalidateQueries({ queryKey: ["singleOrder",id] });
+                toast.success('Order status is update successfully.',{position:'top-right'})
+                // navigate('/dashboard/product/allProducts')
+            }
+          })
+    // const {
+    //     handleSubmit,
+    //     register,
+    //     formState:{isDirty,isSubmitting,errors},
+    //     setValue
+    // } = useForm<OrederStatusValue>({
+    //     resolver: zodResolver(orderSchema),
+    //     defaultValues:{
+    //         status:""
+    //     }
+    // })
+    const handleUpdateStatus =(e: React.ChangeEvent<HTMLSelectElement>)=>{
+        const newStatus = e.target.value;
+        console.log("newStatus",newStatus);
+        const orderId:string=data.order.trackingId 
+        const newOrderStatus:string=newStatus 
+        setOrderStatus(newStatus);
+        mutation.mutate({ orderId,  newOrderStatus });
+    }
+    useEffect(()=>{
+        if(data){
+            // setValue('status',data.order.orderStatus)
+            setOrderStatus(data.order.orderStatus)
+            setTrackingId(data.order.trackingId)
+        }
+    },[data])
     const formatDate = (dateString:string)=>{
         const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+        return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+        })
 
     }
     const formatPrice = (amount:number,currency:string)=>{
@@ -71,7 +122,8 @@ const SingleOrderPage = () => {
           default:
             return 'bg-gray-100 text-gray-800';
         }
-      };
+    };
+    
     if (isLoading || !data){
         return(
             <div className="container">
@@ -102,7 +154,7 @@ const SingleOrderPage = () => {
         </Link>
         <div className="flex items-center ml-auto">
             <span className="mr-2 text-gray-500">Order ID:</span>
-            <span className="font-medium">{data.order.trackingId}</span>
+            <span className="font-medium">{trackingId}</span>
         </div>
         </div>
 
@@ -166,13 +218,25 @@ const SingleOrderPage = () => {
                     Standard Shipping
                 </span>
                 </div>
-                {/* <div className="flex items-start">
-                <span className="w-32 text-gray-600">Estimated Delivery:</span>
-                <span className="flex items-center font-medium">
-                    <Calendar className="w-4 h-4 mr-1 text-gray-500" />
-                    {orderData.shipping.estimatedDelivery}
-                </span>
-                </div> */}
+                <div className="flex items-start">
+                <span className="w-32 text-gray-600">Order Status:</span>
+                
+                    <span className="flex items-center font-medium">
+                        {/* <Calendar className="w-4 h-4 mr-1 text-gray-500" /> */}
+                        <PackageCheck className="w-4 h-4 ml-1 mr-1 text-gray-500"/>
+                        <select
+                            value={orderStatus} onChange={handleUpdateStatus}
+                            className="w-full px-1 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                            <option value="PROCESSED">PROCESSED</option>
+                            <option value="SHIPPED">SHIPPED</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                        </select>
+                    </span>
+                    
+                
+                
+                </div>
             </div>
             </div>
         </div>
@@ -243,6 +307,7 @@ const SingleOrderPage = () => {
             </div>
         </div>
         </div>
+        <ToastContainer/>
     </div>
     // <div className="container">
     //     <div className="flex items-center justify-center min-h-screen antialiased text-copy-primary ">
