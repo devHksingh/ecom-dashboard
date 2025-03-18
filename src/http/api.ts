@@ -140,3 +140,13 @@ export const getSingleOrder = async(id:string)=>{
     const response = await api.get(`/api/v1/orders/${id}`)
     return response.data
 }
+
+// update orderStatus
+export const updateOrderStatus = async(trackingId:string,orderStatus:string)=>{
+    const data ={
+        trackingId,
+        orderStatus
+    }
+    const response = await api.post(`/api/v1/orders/updateOrderStatus`,data)
+    return response.data
+}
