@@ -19,7 +19,7 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import { Award, CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package, PackageSearch, Pencil, ShoppingBag, TrendingDown, TrendingUp, Truck, User2Icon } from "lucide-react"
+import { Award, CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package, PackageSearch, ShoppingBag, TrendingDown, TrendingUp, Truck, User2Icon } from "lucide-react"
 // import { createColumnHelper, useReactTable } from "@tanstack/react-table"
 // import { OrderTable } from "../types/order"
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
@@ -155,10 +155,10 @@ const OrderTable = () => {
     // setId(id)
     navigate(`/dashboard/order/singleOrder/${id}`)
   }
-  const handleEditAction = (id: string) => {
-    console.log("Edit product:", id);
-    navigate(`/dashboard/product/editProduct/${id}`)
-  }
+  // const handleEditAction = (id: string) => {
+  //   console.log("Edit product:", id);
+  //   navigate(`/dashboard/product/editProduct/${id}`)
+  // }
 
   // pageination btn
   const handlePrevBtn = ()=>{
@@ -234,19 +234,19 @@ const OrderTable = () => {
     columnHelper.accessor('_id',{
       header: () => <div className="flex items-center gap-1 capitalize">Actions</div>,
       cell: info =>(
-        <div className="flex gap-2">
+        <div className="flex justify-center">
           <button 
             onClick={() => handleViewAction(info.getValue())}
             className="p-1 rounded hover:bg-gray-100 "
           >
             <Eye className=" text-sky-500 hover:text-sky-600" size={18} />
           </button>
-          <button 
+          {/* <button 
             onClick={() => handleEditAction(info.getValue())}
             className="p-1 rounded hover:bg-gray-100"
           >
             <Pencil className="text-orange-600 hover:text-orange-500" size={18} />
-          </button>
+          </button> */}
         </div>
       )
     })
