@@ -247,7 +247,7 @@ const ProductEditForm = () => {
                 {...register("currency")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">-- Select currency --</option>
+                {/* <option value="">-- Select currency --</option> */}
                 <option value="INR">Indian Rupee</option>
                 <option value="USD">US Dollar</option>
                 <option value="EUR">Euro</option>
