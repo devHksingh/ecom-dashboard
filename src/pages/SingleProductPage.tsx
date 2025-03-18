@@ -58,7 +58,8 @@ const SingleProductPage = () => {
         return `${symbols[currency]|| '₹' } ${amount}`;
       };
     const handleUpdateBtn =(id:string)=>{
-        console.log("handleUpdateBtn",id);
+        // console.log("handleUpdateBtn",id);
+        navigate(`/dashboard/product/editProduct/${id}`)
     }
     const handleDeleteBtn =(id:string)=>{
         toast.info('Processing you request',{position:'top-right'})
