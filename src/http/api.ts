@@ -148,5 +148,5 @@ export const updateOrderStatus = async(trackingId:string,orderStatus:string)=>{
         orderStatus
     }
     const response = await api.post(`/api/v1/orders/updateOrderStatus`,data)
-    return response.data
+    return response
 }
