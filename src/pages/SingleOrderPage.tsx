@@ -3,20 +3,17 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { getSingleOrder, updateOrderStatus } from "../http/api"
 import SingleProductLoder from "../components/skeleton/SingleProductLoder"
 import { ArrowLeft, CreditCard, Package, PackageCheck, Truck, User } from "lucide-react"
-// import { useForm } from "react-hook-form"
-// import { z } from "zod"
-// import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import { queryClient } from "../main"
 import { useDispatch } from "react-redux"
 import { updateAccessToken } from "../features/auth/authSlice"
+import { AxiosError } from "axios"
 
-// const orderSchema = z.object({
-//     status:z.string().min(1,"Order Status is required")
-// })
+interface ApiError{
+    message:string
+}
 
-// type OrederStatusValue = z.infer<typeof orderSchema>
 const SingleOrderPage = () => {
     const [orderStatus,setOrderStatus] = useState("")
     const [trackingId,setTrackingId] = useState("")
@@ -36,34 +33,30 @@ const SingleOrderPage = () => {
     const mutation= useMutation({
         mutationKey:["deleteProduct"],
         mutationFn:({ orderId, newOrderStatus }: { orderId: string; newOrderStatus: string } )=>updateOrderStatus(orderId,newOrderStatus),
-        onError:()=>{
-            toast.warning('Unable to update order status .Try it again',{position:'top-right'})
-        },
+        
         onSuccess:async(response)=>{
             await queryClient.invalidateQueries({ queryKey: ["singleOrder",id] });
-            toast.success('Order status is update successfully.',{position:'top-right'})
-            // navigate('/dashboard/product/allProducts')
-            const {isAccessTokenExp,accessToken}= response.data
-                if(isAccessTokenExp){
-                dispatch(updateAccessToken(accessToken))
-                const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
-                userSessionData.accessToken = accessToken
-                sessionStorage.removeItem('user')
-                sessionStorage.setItem('user',JSON.stringify(userSessionData))
-                }
-        }
+            const {isAccessTokenExp,accessToken,message}= response.data
+            toast.success(message,{position:'top-right'})
+
+            
+            if(isAccessTokenExp){
+            dispatch(updateAccessToken(accessToken))
+            const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+            userSessionData.accessToken = accessToken
+            sessionStorage.removeItem('user')
+            sessionStorage.setItem('user',JSON.stringify(userSessionData))
+            }
+        },
+        onError:(err:AxiosError<ApiError>)=>{
+            const message = err.response?.data?.message || "Error while updating product"
+      
+            console.log("onerror : ",err)
+    //   setErrorMessage(message)
+            toast.warning(message,{position:'top-right'})
+        },
         })
-    // const {
-    //     handleSubmit,
-    //     register,
-    //     formState:{isDirty,isSubmitting,errors},
-    //     setValue
-    // } = useForm<OrederStatusValue>({
-    //     resolver: zodResolver(orderSchema),
-    //     defaultValues:{
-    //         status:""
-    //     }
-    // })
+    
     const handleUpdateStatus =(e: React.ChangeEvent<HTMLSelectElement>)=>{
         const newStatus = e.target.value;
         console.log("newStatus",newStatus);
@@ -232,18 +225,18 @@ const SingleOrderPage = () => {
                 <div className="flex items-start">
                 <span className="w-32 text-gray-600">Order Status:</span>
                 
-                    <span className="flex items-center font-medium">
-                        {/* <Calendar className="w-4 h-4 mr-1 text-gray-500" /> */}
-                        <PackageCheck className="w-4 h-4 ml-1 mr-1 text-gray-500"/>
-                        <select
-                            value={orderStatus} onChange={handleUpdateStatus}
-                            className="w-full px-1 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        >
-                            <option value="PROCESSED">PROCESSED</option>
-                            <option value="SHIPPED">SHIPPED</option>
-                            <option value="DELIVERED">DELIVERED</option>
-                        </select>
-                    </span>
+                <span className="flex items-center font-medium">
+                
+                <PackageCheck className="w-4 h-4 ml-1 mr-1 text-gray-500"/>
+                <select
+                    value={orderStatus} onChange={handleUpdateStatus}
+                    className="w-full px-1 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                    <option value="PROCESSED">PROCESSED</option>
+                    <option value="SHIPPED">SHIPPED</option>
+                    <option value="DELIVERED">DELIVERED</option>
+                </select>
+                </span>
                     
                 
                 
@@ -320,73 +313,8 @@ const SingleOrderPage = () => {
         </div>
         <ToastContainer/>
     </div>
-    // <div className="container">
-    //     <div className="flex items-center justify-center min-h-screen antialiased text-copy-primary ">
-    //     {data && (
-    //             <div className="grid grid-cols-1 gap-8 p-4 rounded-lg shadow-lg md:grid-cols-2 sm:p-6 bg-card/50">
-    //             <div className="flex items-center mx-auto ">
-    //                 <img src={data.order.productDetail.imageUrl} alt={data.order.productDetail.name} className="object-cover w-full"/>
-    //             </div>
-    //             <div className="flex flex-col justify-center p-2 ">
-    //             <h1 className="mb-2 text-4xl font-bold ">{data.order.productDetail.name}</h1>
-    //                 <p className="mb-4 text-sm text-copy-primary/60"><span className="font-bold capitalize ">trackingId:</span> {data.order.trackingId} </p>
-    //                 <div className="flex flex-col items-center justify-center gap-4 mb-4 md:flex-row md:justify-start">
-    //                         <span className="mr-2 text-2xl font-bold "> Unit Price : {formatPrice(data.order.productDetail.price,data.order.productDetail.currency)}</span>
-                        
-    //                     <span className="ml-4 text-lg text-orange-400 ">Total Qty: {data.order.quantity} </span>
-    //                     <span className="ml-4 text-lg text-orange-400 ">Total Price{formatPrice(data.order.totalPrice,data.order.productDetail.currency)} OFF</span>
-                    
-    //                 </div>
-
-    //                 <div className="flex flex-col justify-between ">
-    //                     <h2 className="text-lg font-medium capitalize ">user details</h2>
-    //                     <div>
-    //                         <p>Name: <span className="capitalize ">{data.order.userDetails.userName}</span></p>
-    //                         <p>Email: <span className="">{data.order.userDetails.userEmail}</span></p>
-    //                     </div>
-    //                 </div>
-    //                 <div>
-    //                     <h2>Product details</h2>
-    //                     <div>
-    //                         <p>Unit Price: <span className="capitalize ">{data.order.userDetails.userName}</span></p>
-    //                         <p>Qty: <span className="">{data.order.quantity}</span></p>
-    //                         <p>Total Price: <span className="">{data.order.userDetails.userEmail}</span></p>
-    //                     </div>
-    //                 </div>
-                    
-    //                 {/* <p className="mb-4 ">{product.description}</p> */}
-    //                 <h2 className="mt-2 mb-2 text-lg font-semibold">Categories:</h2>
-    //             <div className="flex flex-wrap gap-2">
-    //                 <span>User details</span>
-    //                 <h2>Name: {data.order.userDetails.userName}</h2>
-    //                 <h2>email: {data.order.userDetails.userEmail}</h2>
-    //             </div>
-    //             <div>
-    //             <div className="mt-10">
-    //                 <p className="mb-2 text-xl"><span className="text-lg font-medium">orderStatus:</span> {data.order.orderStatus}</p>
-    //                 <p className="text-sm ">orderPlaceOn: {formatDate(data.order.orderPlaceOn)}</p>
-    //                 {/* <p className="text-sm ">Last updated: {formatDate(data.updatedAt)}</p> */}
-    //             </div>
-    //         </div>
-    //             {/* <div className="flex gap-4 mt-4">
-    //                 <button className="flex items-center justify-center gap-1 px-2 text-white bg-sky-500 py-1.5 rounded-lg hover:bg-sky-600"
-    //                 onClick={()=>handleUpdateBtn(product._id)}
-    //                 > 
-    //                     <PencilIcon size={16}/>Update
-    //                 </button>
-    //                 <button className="flex items-center justify-center gap-1 px-2 text-white bg-red-500 py-1.5 rounded-lg hover:bg-red-600"
-    //                     onClick={()=>handleDeleteBtn(product._id)}
-    //                 >
-    //                     <Trash2/>Delete
-    //                 </button>
-    //             </div> */}
-    //             </div>
-    //             </div>
-                
-    //         )}
-    //     </div>
-    // </div>
-  )
+    
+    )
 }
 
 export default SingleOrderPage
