@@ -8,13 +8,18 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import { addUserDetails } from "../../features/auth/authSlice";
 import { LoaderCircle } from "lucide-react";
-
+import { AxiosError } from "axios";
+import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify'
 
 type FormFields = {
     email:string,
     password:string;
 }
 
+interface ErrorResponse{
+  message:string
+}
 const schema = z.object({
     email:z.string().email(),
     password:z.string().trim().min(6,"Password must be 6 character is long")
@@ -23,6 +28,7 @@ const schema = z.object({
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>()
+  const [errMsg,setErrMsg]= useState("")
   // const data= useSelector((state:RootState)=>state.auth)
   // mutation for data send for login
   const mutation = useMutation({
@@ -45,11 +51,17 @@ const LoginForm = () => {
         console.log("Retrieve user data from sessionStorage:",userData);
         // console.log("Retrieve user data from sessionStorage:",userData.isLogin);
         console.log("Retrieve user data from sessionStorage:",userData.accessToken);
-        navigate('/dashboard')
+        navigate('/dashboard/order')
         
       }
-      // TODO: Navigate to products list page
+      
     },
+    onError:(err:AxiosError<ErrorResponse>)=>{
+      const errorMeassge = err.response?.data.message || "Something went wrong.Try it again!"
+      setErrMsg(errorMeassge)
+      // toast
+      toast.error(errorMeassge,{position:'top-right'})
+    }
   });
   
     const {register,
@@ -60,8 +72,9 @@ const LoginForm = () => {
     const onSubmit:SubmitHandler<FormFields>=(data)=>{
        
         mutation.mutate(data)
-        
+
     }
+    
     
   return (
     <div className="w-full max-w-lg p-8 rounded-lg shadow-lg bg-card/75">
@@ -71,7 +84,7 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-6 rounded shadow-xl">
               <span className='self-center mb-2 font-medium text-left text-copy-primary/60'>Enter your email below to login to your       account.</span> 
               {mutation.isError && (
-                  <span className="self-center mb-1 text-sm text-red-500">{'Something went wrong.Try it again!'}</span>
+                  <span className="self-center mb-1 text-sm text-red-500">{errMsg}</span>
               )}
             <label className="mt-1">
                 <span className="block text:md after:content-['*'] after:ml-0.5 after:text-red-500 font-semibold  mt-1 text-copy-secondary ">Email</span>
@@ -122,7 +135,7 @@ const LoginForm = () => {
         </form>
 
         
-        
+        <ToastContainer/>
     </div>
     
   )
