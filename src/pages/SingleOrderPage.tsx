@@ -9,6 +9,8 @@ import { ArrowLeft, CreditCard, Package, PackageCheck, Truck, User } from "lucid
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import { queryClient } from "../main"
+import { useDispatch } from "react-redux"
+import { updateAccessToken } from "../features/auth/authSlice"
 
 // const orderSchema = z.object({
 //     status:z.string().min(1,"Order Status is required")
@@ -18,6 +20,7 @@ import { queryClient } from "../main"
 const SingleOrderPage = () => {
     const [orderStatus,setOrderStatus] = useState("")
     const [trackingId,setTrackingId] = useState("")
+    const dispatch = useDispatch()
     
     const navigate = useNavigate()
     const {id} = useParams()
@@ -31,17 +34,25 @@ const SingleOrderPage = () => {
         enabled:!!id
     })
     const mutation= useMutation({
-            mutationKey:["deleteProduct"],
-            mutationFn:({ orderId, newOrderStatus }: { orderId: string; newOrderStatus: string } )=>updateOrderStatus(orderId,newOrderStatus),
-            onError:()=>{
-                toast.warning('Unable to update order status .Try it again',{position:'top-right'})
-            },
-            onSuccess:async()=>{
-                await queryClient.invalidateQueries({ queryKey: ["singleOrder",id] });
-                toast.success('Order status is update successfully.',{position:'top-right'})
-                // navigate('/dashboard/product/allProducts')
-            }
-          })
+        mutationKey:["deleteProduct"],
+        mutationFn:({ orderId, newOrderStatus }: { orderId: string; newOrderStatus: string } )=>updateOrderStatus(orderId,newOrderStatus),
+        onError:()=>{
+            toast.warning('Unable to update order status .Try it again',{position:'top-right'})
+        },
+        onSuccess:async(response)=>{
+            await queryClient.invalidateQueries({ queryKey: ["singleOrder",id] });
+            toast.success('Order status is update successfully.',{position:'top-right'})
+            // navigate('/dashboard/product/allProducts')
+            const {isAccessTokenExp,accessToken}= response.data
+                if(isAccessTokenExp){
+                dispatch(updateAccessToken(accessToken))
+                const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
+                userSessionData.accessToken = accessToken
+                sessionStorage.removeItem('user')
+                sessionStorage.setItem('user',JSON.stringify(userSessionData))
+                }
+        }
+        })
     // const {
     //     handleSubmit,
     //     register,
