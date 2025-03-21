@@ -1,4 +1,4 @@
-import { House, Package, ShoppingBasket, Users } from "lucide-react"
+import { House, Package, PackageSearch, ShoppingBasket, Users } from "lucide-react"
 import {  NavLink } from "react-router-dom"
 
 
@@ -19,6 +19,9 @@ const RouteSelect = () => {
         <NavLink to={'/dashboard/order'} className={({isActive})=>`flex items-center justify-start w-full gap-2 px-2 py-1 text-sm text-black capitalize rounded shadow bg-stone-200 ${isActive?`bg-white text-stone-950 shadow`:`hover:bg-stone-200 bg-transparent text-stone-500 shadow-none`}`}>
         <ShoppingBasket size={16}/>
         <span className="hidden text-lg md:block">Orders</span></NavLink>
+        <NavLink to={'/dashboard/order/singleOrderByTrackingId'} className={({isActive})=>`flex items-center justify-start w-full gap-2 px-2 py-1 text-sm text-black capitalize rounded shadow bg-stone-200 ${isActive?`bg-white text-stone-950 shadow`:`hover:bg-stone-200 bg-transparent text-stone-500 shadow-none`}`}>
+        <PackageSearch size={16}/>
+        <span className="hidden text-lg md:block">Find Order</span></NavLink>
     </div>
   )
 }

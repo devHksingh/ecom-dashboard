@@ -67,7 +67,7 @@ const SingleOrderPage = () => {
     }
     useEffect(()=>{
         if(data){
-            // setValue('status',data.order.orderStatus)
+            
             setOrderStatus(data.order.orderStatus)
             setTrackingId(data.order.trackingId)
         }
@@ -121,8 +121,7 @@ const SingleOrderPage = () => {
             return 'bg-purple-100 text-purple-800';
           case 'DELIVERED':
             return 'bg-green-100 text-green-800';
-        //   case 'CANCELLED':
-        //     return 'bg-red-100 text-red-800';
+        
           default:
             return 'bg-gray-100 text-gray-800';
         }

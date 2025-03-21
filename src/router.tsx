@@ -13,6 +13,7 @@ import ProductEditForm from "./pages/ProductEditForm";
 import UsersTable from "./pages/UsersTable";
 import OrderTable from "./pages/OrderTable";
 import SingleOrderPage from "./pages/SingleOrderPage";
+import GetOrderByTrackingId from "./pages/GetOrderByTrackingId";
 // import FormProduct from "./pages/FormProduct";
 
 // const router = createBrowserRouter([
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
             {
               path:`singleOrder/:id`,
               element:<SingleOrderPage/>
+            },
+            {
+              path:'singleOrderByTrackingId',
+              element:<GetOrderByTrackingId/>
             }
           ]
         }

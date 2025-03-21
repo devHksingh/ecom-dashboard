@@ -110,9 +110,10 @@ const ProductEditForm = () => {
     },
     onError: async(err: AxiosError<ErrorResponse>) => {
       const message = err.response?.data?.message || "Error while updating product"
+      
       console.log("onerror : ",err)
       setErrorMessage(message)
-      toast.error(message)
+      toast.error(message,{position:'top-right'})
       
       // logout user if token exprie
       if(err.response?.status === 401){
