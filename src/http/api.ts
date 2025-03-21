@@ -136,17 +136,22 @@ export const getgraphData = async (year = 2025) => {
     return response.data
 }
 
-export const getSingleOrder = async(id:string)=>{
+export const getSingleOrder = async (id: string) => {
     const response = await api.get(`/api/v1/orders/${id}`)
     return response.data
 }
 
 // update orderStatus
-export const updateOrderStatus = async(trackingId:string,orderStatus:string)=>{
-    const data ={
+export const updateOrderStatus = async (trackingId: string, orderStatus: string) => {
+    const data = {
         trackingId,
         orderStatus
     }
-    const response = await api.post(`/api/v1/orders/updateOrderStatus`,data)
+    const response = await api.post(`/api/v1/orders/updateOrderStatus`, data)
     return response
+}
+// getOrderByTrackingId
+export const getOrderByTrackingId = async (trackingId: string) => {
+    const res = await api.get(`/api/v1/orders/getOrderByTrackingId/${trackingId}`)
+    return res.data
 }
