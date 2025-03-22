@@ -19,7 +19,7 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import { Award, CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package, PackageSearch, ShoppingBag, TrendingDown, TrendingUp, Truck, User2Icon } from "lucide-react"
+import {  CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package,  ShoppingBag, TrendingDown, TrendingUp, Truck } from "lucide-react"
 // import { createColumnHelper, useReactTable } from "@tanstack/react-table"
 // import { OrderTable } from "../types/order"
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
@@ -455,82 +455,7 @@ const OrderTable = () => {
 
         
         {/* grid */}
-        <div className="grid gap-4 auto-rows-min md:grid-cols-3">
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Total sale Amount: <span><User2Icon size={14}/></span></h2>
-            <span className="font-mono text-4xl font-bold">${data.totalSaleAmount}</span>
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold text-md">Number of order last 30 days: <span > <PackageSearch size={14} /></span></h2>
-            <span className="font-mono text-4xl font-bold">{data.totalOrders}</span>
-            <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.past30DaysOrders.length} from last month</span>
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Top 5 most bought orders: <span> <Award size={14}/></span></h2>
-            <span className="flex flex-col flex-wrap gap-2 justify-evenly md:flex-row">{data.top5MostBought.map((item:OrderBoughtItem,index:number)=>(
-          <div key={index} className="relative self-center cursor-pointer group">
-            
-            <div className="p-1 rounded-lg bg-zinc-50">
-              <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
-              <span className="absolute top-0 p-1 mx-auto text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
-            </div>
-          </div>
-        ))}</span>
-            {/* <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.lastThirtyDaysUserCount.usersAdded} from last month</span> */}
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold text-md">top 5 Most Expensive Orders:: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5MostExpensiveOrders.map((item:OrderTableProps,index:number)=>(
-          <div key={index} className="relative self-center cursor-pointer group">
-            
-            <div className="p-1 rounded-lg bg-zinc-50">
-              <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
-              <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
-            </div>
-          </div>
-        ))}</span>
-            {/* <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.lastThirtyDaysUserCount.usersAdded} from last month</span> */}
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Expensive Orders: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastExpensiveOrders.map((item:OrderTableProps,index:number)=>(
-          <div key={index} className="relative self-center cursor-pointer group">
-            
-            <div className="p-1 rounded-lg bg-zinc-50">
-              <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
-              <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
-            </div>
-          </div>
-        ))}</span>
-            {/* <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.lastThirtyDaysUserCount.usersAdded} from last month</span> */}
-          </div>
-          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-            <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Bought: <span><User2Icon size={14}/></span></h2>
-            <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastBought.map((item:OrderBoughtItem,index:number)=>(
-          <div key={index} className="relative self-center cursor-pointer group">
-            
-            <div className="p-1 rounded-lg bg-zinc-50">
-              <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
-              <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
-            </div>
-          </div>
-        ))}</span>
-            {/* <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.lastThirtyDaysUserCount.usersAdded} from last month</span> */}
-          </div>
-          {/*  */}
-            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  processed: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.processed}</span>
-            </div>
-            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  delivered: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.delivered}</span>
-            </div>
-            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
-              <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  shipped: <span><User2Icon size={14}/></span></h2>
-              <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.shipped}</span>
-            </div>
-        </div>
+        
         {/* graph */}
         {graphData && (
           <div className="p-1 mt-6">
@@ -709,3 +634,81 @@ const OrderTable = () => {
 
 export default OrderTable
 
+/*
+<div className="grid gap-4 auto-rows-min md:grid-cols-3">
+          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Total sale Amount: <span><User2Icon size={14}/></span></h2>
+            <span className="font-mono text-4xl font-bold">${data.totalSaleAmount}</span>
+          </div>
+          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+            <h2 className="flex justify-between w-full font-semibold text-md">Number of order last 30 days: <span > <PackageSearch size={14} /></span></h2>
+            <span className="font-mono text-4xl font-bold">{data.totalOrders}</span>
+            <span className="text-sm font-medium text-copy-primary/70 text-pretty">+{data.past30DaysOrders.length} from last month</span>
+          </div>
+          <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+            <h2 className="flex justify-between w-full font-semibold capitalize text-md">Top 5 most bought orders: <span> <Award size={14}/></span></h2>
+            <span className="flex flex-col flex-wrap gap-2 justify-evenly md:flex-row">{data.top5MostBought.map((item:OrderBoughtItem,index:number)=>(
+          <div key={index} className="relative self-center cursor-pointer group">
+            
+            <div className="p-1 rounded-lg bg-zinc-50">
+              <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
+              <span className="absolute top-0 p-1 mx-auto text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
+            </div>
+          </div>
+        ))}</span>
+            
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold text-md">top 5 Most Expensive Orders:: <span><User2Icon size={14}/></span></h2>
+              <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5MostExpensiveOrders.map((item:OrderTableProps,index:number)=>(
+            <div key={index} className="relative self-center cursor-pointer group">
+              
+              <div className="p-1 rounded-lg bg-zinc-50">
+                <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
+                <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
+              </div>
+            </div>
+          ))}</span>
+              
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Expensive Orders: <span><User2Icon size={14}/></span></h2>
+              <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastExpensiveOrders.map((item:OrderTableProps,index:number)=>(
+            <div key={index} className="relative self-center cursor-pointer group">
+              
+              <div className="p-1 rounded-lg bg-zinc-50">
+                <img src={item.productDetail.imageUrl} alt={item.productDetail.name} className="object-cover h-20 rounded-lg w-18"/>
+                <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.productDetail.name}</span>
+              </div>
+            </div>
+          ))}</span>
+              
+            </div>
+            <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+              <h2 className="flex justify-between w-full font-semibold capitalize text-md">top 5 Least Bought: <span><User2Icon size={14}/></span></h2>
+              <span className="flex flex-col items-center justify-between gap-2 md:flex-row">{data.top5LeastBought.map((item:OrderBoughtItem,index:number)=>(
+            <div key={index} className="relative self-center cursor-pointer group">
+              
+              <div className="p-1 rounded-lg bg-zinc-50">
+                <img src={item.value.url} alt={item.name} className="object-cover h-20 rounded-lg w-18"/>
+                <span className="absolute top-0 p-1 text-xs scale-0 rounded text-stone-200 bg-stone-900 group-hover:scale-100">{item.name}</span>
+              </div>
+            </div>
+          ))}</span>
+             
+            </div>
+            
+              <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+                <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  processed: <span><User2Icon size={14}/></span></h2>
+                <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.processed}</span>
+              </div>
+              <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+                <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  delivered: <span><User2Icon size={14}/></span></h2>
+                <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.delivered}</span>
+              </div>
+              <div className="flex flex-col gap-2 p-2 rounded-xl bg-stone-400/50 aspect-auto" >
+                <h2 className="flex justify-between w-full font-semibold capitalize text-md">Number of order  shipped: <span><User2Icon size={14}/></span></h2>
+                <span className="font-mono text-4xl font-bold">{data.productOrderStatusCount.shipped}</span>
+              </div>
+          </div>
+*/
