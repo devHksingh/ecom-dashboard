@@ -1,10 +1,45 @@
-import { Moon, Sun } from "lucide-react";
+import { LogInIcon, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../../app/store";
+import { logoutUser } from "../../http/api";
+import { deleteUser } from "../../features/auth/authSlice";
+import { useMutation } from "@tanstack/react-query"
 
 const ThemeToggle = () => {
     const [theme,setTheme]= useState("")
     const [isChecked, setIsChecked] = useState(false)
+    const [isLoginUser,setIsLoginUser] = useState(false)
+    const userData = useSelector((state:RootState)=> state.auth)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const mutation = useMutation({
+        mutationKey:["dashboardLogoutUser"],
+        mutationFn:logoutUser,
+        onError:()=>{},
+        onSuccess:()=>{
+          console.log("logout successfully");
+          dispatch(deleteUser())
+          sessionStorage.clear()
+          navigate('/dashboard')
+        }
+      })
+    
+      const handleLogoutBtn =()=>{
+        mutation.mutate()
+      }
+    
+    useEffect(() => {
+        if (userData.isLogin) {
+          setIsLoginUser(true);
+          
+        } else {
+          setIsLoginUser(false);
+        }
+      }, [userData.isLogin]);
     useEffect(()=>{
         // check user prefers-color-scheme 
         const isDrakTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -49,8 +84,19 @@ const ThemeToggle = () => {
         }
       }
   return (
-    <div className="  sticky top-[calc(100vh_-_48px_-_16px)] text-sm">
-        
+    <div className="sticky top-[calc(100vh_-_48px_-_16px)] text-sm ">
+        {
+          isLoginUser && (
+            <button
+            onClick={handleLogoutBtn}
+            disabled={mutation.isPending}
+            className="flex text-sm items-center gap-2 bg-red-200 transition-colors hover:bg-red-100 hover:text-red-700 px-3 py-1.5 rounded w-full text-center justify-center "
+            >
+              <span className="capitalize ">logout</span>
+              <LogInIcon size={15}/>
+            </button>
+          )
+        }
         
         <div className="flex items-center justify-around gap-1 rounded-md md:gap-2 border-copy-primary">
             <span className="hidden md:inline-block text-copy-primary text-pretty">Theme :</span>
