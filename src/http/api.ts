@@ -155,3 +155,9 @@ export const getOrderByTrackingId = async (trackingId: string) => {
     const res = await api.get(`/api/v1/orders/getOrderByTrackingId/${trackingId}`)
     return res.data
 }
+
+// get userInfo
+export const getuser = async() =>{
+    const response = await api.get('/api/v1/users/getuser')
+    return response.data
+}
