@@ -161,3 +161,10 @@ export const getuser = async() =>{
     const response = await api.get('/api/v1/users/getuser')
     return response.data
 }
+// change password
+export const changePassword = async(data: { oldPassword: string; password: string,confirmPassword:string })=>{
+    console.log("api ",data);
+    
+    const response = await api.post('/api/v1/users/changePassword',data)
+    return response.data
+}
