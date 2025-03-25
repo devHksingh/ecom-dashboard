@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux"
 import { deleteUser, updateAccessToken } from "../features/auth/authSlice"
 import TableLoader from "../components/skeleton/TableLoader"
 import { AxiosError } from "axios"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {
   XAxis,
   YAxis,
@@ -19,7 +19,7 @@ import {
   Bar,
 //   Legend,
 } from "recharts";
-import {  CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package,  ShoppingBag, TrendingDown, TrendingUp, Truck } from "lucide-react"
+import {  CheckCircle, ChevronLeft, ChevronRight, DollarSign, Eye, Package,  PackageSearch,  ShoppingBag, TrendingDown, TrendingUp, Truck } from "lucide-react"
 // import { createColumnHelper, useReactTable } from "@tanstack/react-table"
 // import { OrderTable } from "../types/order"
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
@@ -512,9 +512,15 @@ const OrderTable = () => {
           )
         }
 
+        <Link 
+        to={'/dashboard/order/singleOrderByTrackingId'} 
+        className="flex items-center justify-start w-[16%] gap-2 p-2 mt-6 text-gray-100 bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:opacity-50">
+          <span><PackageSearch size={16}/></span>Find Order By TrackingId
+        </Link>
+
         {/* table */}
         
-        <div className="w-full">
+        <div className="w-full mt-4">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xl font-bold">Orders</div>
             <div className="relative">
