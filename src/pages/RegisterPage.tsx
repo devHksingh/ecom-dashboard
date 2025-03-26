@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import z from 'zod'
 import { registerUser } from '../http/api'
 import { LoaderCircle } from 'lucide-react'
+import { AxiosError } from 'axios'
+import { toast, ToastContainer } from 'react-toastify'
+import { useState } from 'react'
 
 
 
@@ -13,6 +16,9 @@ type FormFields={
   email:string,
   password:string,
   confirmPassword:string
+}
+interface ErrorResponse{
+  message:string
 }
 
 const formSchema= z.object({
@@ -27,6 +33,7 @@ const formSchema= z.object({
 
 
 const RegisterPage = () => {
+  const [errMsg,setErrMsg] = useState("")
   const navigate = useNavigate()
   const mutation = useMutation({
     mutationFn:registerUser,
@@ -35,9 +42,13 @@ const RegisterPage = () => {
         navigate('/dashboard/auth/login')
       }
     },
-    onError:(res)=>{
-      console.log(res)
-    }
+    onError:(err:AxiosError<ErrorResponse>)=>{
+                console.log("mutation Error",err)
+                const errorMeassge = err.response?.data.message || "Something went wrong.Try it again!"
+                setErrMsg(errorMeassge)
+                // toast
+                toast.error(errorMeassge,{position:'top-right'})
+            },
   })
   const {register,handleSubmit,formState:{errors}} = useForm<FormFields>({
     resolver:zodResolver(formSchema)
@@ -55,8 +66,8 @@ const RegisterPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-4 mt-2 rounded shadow-md ">
             <span className='self-center font-medium text-left text-copy-primary/60'>Enter your information to create an account</span><br/>
             {mutation.isError && (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              <span className="self-center mb-1 text-sm text-red-500">{(mutation.error as any)?.response?.data?.message}</span>
+              
+              <span className="self-center mb-1 text-sm text-red-500">{errMsg}</span>
             )}
             <label className="mt-1">
                 <span className="block text:md after:content-['*'] after:ml-0.5 after:text-red-500 font-semibold  mt-1 text-copy-secondary ">Name</span>
@@ -131,6 +142,7 @@ const RegisterPage = () => {
         
         
     </div>
+    <ToastContainer/>
     </div>
   )
 }
