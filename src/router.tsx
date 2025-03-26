@@ -16,6 +16,7 @@ import SingleOrderPage from "./pages/SingleOrderPage";
 import GetOrderByTrackingId from "./pages/GetOrderByTrackingId";
 import UserProfile from "./pages/UserProfile";
 import ChangePassword from "./pages/ChangePassword";
+import CreateManager from "./pages/CreateManager";
 // import FormProduct from "./pages/FormProduct";
 
 // const router = createBrowserRouter([
@@ -141,6 +142,15 @@ const router = createBrowserRouter([
               element:<ChangePassword/>
             },
 
+          ]
+        },
+        {
+          path:'createManager',
+          children:[
+            {
+              path:'',
+              element:<CreateManager/>
+            }
           ]
         }
         
