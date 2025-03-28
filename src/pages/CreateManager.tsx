@@ -7,6 +7,7 @@ import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import useAuth from "../hooks/useAuth";
 
 interface FormFields{
     name:string,
@@ -30,6 +31,7 @@ const schema = z.object({
 
 const CreateManager = () => {
     const [errMsg,setErrMsg] = useState("")
+    useAuth()
     const mutation = useMutation({
         mutationKey:["createManager"],
         mutationFn:createManager,

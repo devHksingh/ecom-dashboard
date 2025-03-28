@@ -3,6 +3,7 @@ import  { FormEvent, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { getOrderByTrackingId } from "../http/api";
 import { AxiosError } from "axios";
+import useAuth from "../hooks/useAuth";
 
  interface OrderProps{
     productDetail:{
@@ -32,6 +33,7 @@ const GetOrderByTrackingId = () => {
     const [submitted, setSubmitted] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [order, setOrder] = useState<OrderProps>();
+    useAuth()
     // const navigate = useNavigate()
 
     const {data,isLoading,isError,error } = useQuery({

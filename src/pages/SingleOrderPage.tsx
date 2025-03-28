@@ -9,6 +9,7 @@ import { queryClient } from "../main"
 import { useDispatch } from "react-redux"
 import { updateAccessToken } from "../features/auth/authSlice"
 import { AxiosError } from "axios"
+import useAuth from "../hooks/useAuth"
 
 interface ApiError{
     message:string
@@ -18,7 +19,7 @@ const SingleOrderPage = () => {
     const [orderStatus,setOrderStatus] = useState("")
     const [trackingId,setTrackingId] = useState("")
     const dispatch = useDispatch()
-    
+    useAuth()
     const navigate = useNavigate()
     const {id} = useParams()
     if(!id){

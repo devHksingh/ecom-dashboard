@@ -33,6 +33,7 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table';
 import {  OrderBoughtItem, OrderTableProps } from "../types/order"
+import useAuth from "../hooks/useAuth"
 
 
 interface ErrorResponse {
@@ -42,6 +43,7 @@ interface ErrorResponse {
 const OrderTable = () => {
     const [limit,setLimit]= useState(10)
     const [skip,setSkip]= useState(0)
+    useAuth()
     // const [orderData,setOrderData]= useState(null)
     // const [past30DaysOrders,setPast30DaysOrders]= useState(null)
     // const [top5MostBought,setTop5MostBought]= useState(null)

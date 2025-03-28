@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { RootState } from '../app/store'
-import { useDispatch, useSelector } from 'react-redux'
+// import { RootState } from '../app/store'
+import { useDispatch } from 'react-redux'
 import { createProduct } from '../http/api'
 import { LoaderCircle } from 'lucide-react'
 import { updateAccessToken } from '../features/auth/authSlice'
@@ -12,6 +12,7 @@ import { AxiosError } from 'axios'
 import { queryClient } from '../main'
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
+import useAuth from '../hooks/useAuth'
 
 
 // import useAuth from '../hooks/useAuth'
@@ -44,17 +45,18 @@ const ProductForm = () => {
   // user data from state
   
   const [displayMessage,setDisplayMessage]= useState("")
-  const userData = useSelector((state:RootState)=>state.auth)
+  useAuth()
+  // const userData = useSelector((state:RootState)=>state.auth)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const {accessToken,refreshToken} = userData
+  // const {accessToken,refreshToken} = userData
   // Log tokens when component mounts
   // TODO: REMOVE USEEFFECT ON PRODUCTION
-  useEffect(() => {
-    console.log(userData)
-    console.log('Current Access Token:', accessToken);
-    console.log('Current Refresh Token:', refreshToken);
-  }, [accessToken, refreshToken,userData]);
+  // useEffect(() => {
+  //   console.log(userData)
+  //   console.log('Current Access Token:', accessToken);
+  //   console.log('Current Refresh Token:', refreshToken);
+  // }, [accessToken, refreshToken,userData]);
 
   const mutation = useMutation({
     mutationKey:["createProduct"],

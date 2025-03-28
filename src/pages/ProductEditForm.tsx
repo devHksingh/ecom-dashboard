@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify'
 import { useDispatch } from "react-redux"
 import { deleteUser, updateAccessToken } from "../features/auth/authSlice"
+import useAuth from "../hooks/useAuth"
 
 // Define the product schema with  validation
 const productSchema = z.object({
@@ -34,6 +35,7 @@ const ProductEditForm = () => {
   const [oldImg, setOldImg] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>("")
   const dispatch = useDispatch()
+  useAuth()
   const { id } = useParams()
   const queryClient = useQueryClient()
   const navigate = useNavigate()

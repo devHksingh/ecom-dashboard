@@ -21,6 +21,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { AxiosError } from "axios"
 import { deleteUser } from "../features/auth/authSlice"
 import { useDispatch } from "react-redux"
+import useAuth from "../hooks/useAuth"
 
 interface ErrorResponse {
   message: string;
@@ -42,6 +43,7 @@ const ProductTable = () => {
   const [totalproducts, setTotalProducts] = useState(0)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  useAuth()
   // Fetch products data
   const { data, isLoading, isError ,error } = useQuery({
     queryKey: ["products", limit, skip, category],

@@ -8,8 +8,10 @@ import { PencilIcon, Trash2 } from "lucide-react"
 import { Product } from "../types/product"
 import { queryClient } from "../main"
 import { ToastContainer, toast } from 'react-toastify';
+import useAuth from "../hooks/useAuth"
 
 const SingleProductPage = () => {
+    useAuth()
     const mutation= useMutation({
         mutationKey:["deleteProduct"],
         mutationFn:deleteSingleProduct,

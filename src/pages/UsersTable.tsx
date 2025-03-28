@@ -10,6 +10,7 @@ import {  ChevronLeft, ChevronRight, Search, User2Icon } from "lucide-react"
 import TableLoader from "../components/skeleton/TableLoader"
 import { AxiosError } from "axios"
 import { useNavigate } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
 // import { ToastContainer, toast } from 'react-toastify';
 // import { useNavigate } from "react-router-dom"
 
@@ -27,7 +28,7 @@ const UsersTable = () => {
     const [totalPages, setTotalPages] = useState(null)
     // const [nextPage, setNextPage] = useState(null)
     const [totalusers, setTotalUsers] = useState(0)
-    
+    useAuth()
     
     const userData = useSelector((state:RootState)=>state.auth)
     

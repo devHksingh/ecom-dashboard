@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 interface FormFields {
   oldPassword:string,
@@ -28,6 +29,7 @@ const schema = z.object({
 
 const ChangePassword = () => {
   const [errMsg,setErrMsg] = useState("")
+  useAuth()
   const mutation = useMutation({
     mutationKey:["updatePassword"],
     mutationFn:changePassword,
