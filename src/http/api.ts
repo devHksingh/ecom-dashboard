@@ -95,7 +95,7 @@ export const updateProduct = async (id: string, data: FormData) => {
 // logout api
 
 export const logoutUser = async () => {
-    return api.get('/api/v1/users/logout')
+    return api.post('/api/v1/users/logout')
 }
 
 // getallUser
@@ -157,17 +157,17 @@ export const getOrderByTrackingId = async (trackingId: string) => {
 }
 
 // get userInfo
-export const getuser = async() =>{
+export const getuser = async () => {
     const response = await api.get('/api/v1/users/getuser')
     return response.data
 }
 // change password
-export const changePassword = async(data: { oldPassword: string, password: string,confirmPassword:string })=>{
-    const response = await api.post('/api/v1/users/changePassword',data)
+export const changePassword = async (data: { oldPassword: string, password: string, confirmPassword: string }) => {
+    const response = await api.post('/api/v1/users/changePassword', data)
     return response.data
 }
 // create manager
-export const createManager = async(data:{name:string,password: string,confirmPassword:string})=>{
-    const response = await api.post('/api/v1/users/admin/register/manager',data)
+export const createManager = async (data: { name: string, password: string, confirmPassword: string }) => {
+    const response = await api.post('/api/v1/users/admin/register/manager', data)
     return response.data
 }
