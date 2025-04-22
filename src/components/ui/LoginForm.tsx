@@ -82,7 +82,7 @@ const LoginForm = () => {
         <h1 className="self-center mt-1 text-2xl font-bold text-center text-copy-primary">Login</h1>
         
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col self-center w-full p-6 rounded shadow-xl">
-              <span className='self-center mb-2 font-medium text-left text-copy-primary/60'>Enter your email below to login to your       account.</span> 
+              <span className='self-center mb-2 font-medium text-left text-copy-primary/60'>Enter your email below to login to your account.</span> 
               {mutation.isError && (
                   <span className="self-center mb-1 text-sm text-red-500">{errMsg}</span>
               )}
