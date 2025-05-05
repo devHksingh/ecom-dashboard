@@ -132,7 +132,7 @@ const ProductTable = () => {
     console.log("categoryData :", data);
   }
 
-  // mutation query for forced logout user in case of error (in case of access token not found)
+  // mutation query for forced logout user in case of error (in case of Invalid or expired refresh token)
   const logoutMutation = useMutation({
     mutationKey: ["logoutUser"],
     mutationFn: forcedLogout,

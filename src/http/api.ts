@@ -108,16 +108,9 @@ export const allUser = async (limit = 10, skip = 0) => {
 
 export const forcedLogout = async () => {
     const userSessionData = JSON.parse(sessionStorage.getItem('user') || `{}`)
-    console.log("userSessionData ---------------", userSessionData);
-
     const userId = userSessionData.id
-    console.log("UserID IN API : ", userId)
     const data = { userId: userId }
-    console.log("UserID IN API : ", data)
     const response = await api.post('/api/v1/users/forcedLogout', data);
-    console.log("Logout response : ", response)
-
-
     return response;
 }
 // api for get all order details
