@@ -123,19 +123,19 @@ const RegisterPage = () => {
               Submit
             </button>
             <div className=" text-copy-primary">
-            <p className="text-sm ">
-            By continuing, I agree to the Terms of Use & Privacy Policy
-          </p>
+              <p className="text-sm ">
+              By continuing, I agree to the Terms of Use & Privacy Policy
+              </p>
 
-          <p className="font-normal ">
-            Already have an Account?{" "}
-            <span
-              className="font-semibold cursor-pointer"
-              onClick={() => navigate('/dashboard/auth/login')}
-            >
-              Try Login
-            </span>
-          </p>
+              <p className="font-normal ">
+                Already have an Account?{" "}
+                <span
+                    className="font-semibold cursor-pointer"
+                    onClick={() => navigate('/dashboard/auth/login')}
+                  >
+                  Try Login
+                </span>
+              </p>
           </div>
         </form>
 
