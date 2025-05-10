@@ -112,7 +112,11 @@ const ProductTable = () => {
   const mutation = useMutation({
     mutationKey: ["deleteProduct", id],
     mutationFn: deleteSingleProduct,
-    onError: () => {},
+    onError: (err: AxiosError<ErrorResponse>) => {
+      const message =
+        err.response?.data?.message || "Unable to delete Proudct .Try it again";
+      toast.warning(message, { position: "top-right" });
+    },
     onSuccess: async () => {
       await queryClient.refetchQueries({ queryKey: ["products", limit, skip] });
       toast.success("Proudct is deleted successfully", {
